@@ -20,13 +20,23 @@ class RefreshThumbnailsCommand extends Command {
 		// check source and target folders
 		$this->check($config);
 
-		$output->writeln("<info>scanning {$config['source']}</info>");
+		$output->writeln("scanning {$config['source']}");
 		$images = $this->scanFolderForImages($config['source']);
 		$imagesCount = count($images);
-		$output->writeln("<info>found {$imagesCount} photos.</info>");
+		$output->writeln("found {$imagesCount} photos.");
 
+		$i = 0;
 		foreach ($images as $image) {
-			$this->generateThumbnail($image, $output);
+			$success = $this->generateThumbnail($image, $output);
+
+			if ($success) {
+				$output->write('<fg=green>.</fg=green>');
+			} else {
+				$output->write('<fg=red>.</fg=red>');
+			}
+			if (0 == ++$i % 60) {
+				$output->writeln(str_pad("{$i}/{$imagesCount}", 12, ' ', STR_PAD_LEFT));
+			}
 		}
 	}
 
@@ -63,6 +73,11 @@ class RefreshThumbnailsCommand extends Command {
 		if (!is_readable($cacheThumb)) {
 			// Get new sizes
 			list($width, $height) = getimagesize($image);
+
+			if (max($width, $height) > 4000) {
+				return false;
+			}
+
 			$l = min($width, $height);
 			$x = ($l == $width) ? 0 : round(($width - $l) / 2);
 			$y = ($l == $height) ? 0 : round(($height - $l) / 2);
@@ -77,9 +92,11 @@ class RefreshThumbnailsCommand extends Command {
 
 				// Output
 				imagejpeg($thumb, $cacheThumb);
-				$output->write('.');
+				return true;
 			}
 		}
+
+		return true;
 	}
 
 	protected function check(array $config) {
