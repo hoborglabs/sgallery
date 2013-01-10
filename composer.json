@@ -1,0 +1,16 @@
+{
+    "name": "hoborglabs/sgallery",
+    "description": "Static Gallery",
+    "require": {
+        "symfony/console": "v2.1.6"
+    },
+    "authors": [
+        {
+            "name": "Wojtek Oledzki",
+            "email": "wojciech.oledzki@bskyb.com"
+        }
+    ],
+    "config": {
+        "vendor-dir": "vendors"
+    }
+}

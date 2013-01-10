@@ -1,0 +1,13 @@
+# IDEs
+.buildpath
+.project
+.settings
+*.swp
+
+*.ini
+!*.default.ini
+
+/composer.*
+!/composer.json
+
+/vendors
