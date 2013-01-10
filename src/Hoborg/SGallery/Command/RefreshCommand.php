@@ -20,10 +20,7 @@ class RefreshCommand extends Command {
 		// get gallery configuration
 		$output->writeln('<info>Refreshing Gallery...</info>');
 
-		$output->writeln("<info>scanning {$config['source']}</info>");
-		$images = $this->scanFolderForImages($config['source']);
-		$imagesCount = count($images);
-		$output->writeln("<info>found {$imagesCount} photos.</info>");
+		$this->getApplication()->get('refresh:thumbnails')->run($input, $output);
 	}
 
 	protected function scanFolderForImages($folder) {

@@ -10,6 +10,7 @@ class Application extends ConsoleApplication {
 
 	protected $appRoot = null;
 	protected $configRoot = null;
+	protected $targetRoot = null;
 
 	protected $configuration = null;
 
@@ -46,6 +47,7 @@ class Application extends ConsoleApplication {
 		$commands = parent::getDefaultCommands();
 
 		$commands[] = new RefreshCommand();
+		$commands[] = new Command\RefreshThumbnailsCommand();
 
 		return $commands;
 	}
