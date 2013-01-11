@@ -27,7 +27,7 @@ class RefreshThumbnailsCommand extends Command {
 
 		$i = 0;
 		foreach ($images as $image) {
-			$success = $this->generateThumbnail($image, $output);
+			$success = $this->generateThumbnail($image);
 
 			if ($success) {
 				$output->write('<fg=green>.</fg=green>');
@@ -35,9 +35,11 @@ class RefreshThumbnailsCommand extends Command {
 				$output->write('<fg=red>.</fg=red>');
 			}
 			if (0 == ++$i % 60) {
-				$output->writeln(str_pad("{$i}/{$imagesCount}", 12, ' ', STR_PAD_LEFT));
+				$done = str_pad(round(100 * $i/$imagesCount).'%', 4, ' ');
+				$output->writeln(str_pad("{$i}|{$done}", 12, ' ', STR_PAD_LEFT));
 			}
 		}
+		$output->writeln("\ndone.");
 	}
 
 	protected function scanFolderForImages($folder) {
@@ -64,7 +66,7 @@ class RefreshThumbnailsCommand extends Command {
 		return $images;
 	}
 
-	protected function generateThumbnail($image, $output) {
+	protected function generateThumbnail($image) {
 		$ext = strtolower(preg_replace('/.*\.([^.]+)$/', '$1', $image));
 		$config = $this->getApplication()->getConfiguration();
 		$cacheThumb = $config['target'] . '/static/thumbnails/' . md5($image) . ".{$ext}";

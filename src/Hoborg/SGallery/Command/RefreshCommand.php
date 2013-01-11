@@ -21,6 +21,7 @@ class RefreshCommand extends Command {
 		$output->writeln('<info>Refreshing Gallery...</info>');
 
 		$this->getApplication()->get('refresh:thumbnails')->run($input, $output);
+		$this->getApplication()->get('refresh:html')->run($input, $output);
 	}
 
 	protected function scanFolderForImages($folder) {
