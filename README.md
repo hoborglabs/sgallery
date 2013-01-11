@@ -3,6 +3,10 @@
 SGallery stands for SimpleGallery or SpeedeGallery or SuperfastGallery
 or ... you get the idea.
 
+
+
+
+
 ## Main Principles
 
 Whole gallery is generated up-front using your folder with photos. And by whole gallery I mean
@@ -24,4 +28,16 @@ php sg.php refresh:css
 For more options check
 ~~~~~
 php sg.php help
+~~~~~
+
+
+
+
+
+## Installation
+
+~~~~~
+git clone git://github.com/hoborglabs/sgallery.git
+curl -s https://getcomposer.org/installer | php
+php composer.php install
 ~~~~~
