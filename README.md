@@ -41,3 +41,22 @@ git clone git://github.com/hoborglabs/sgallery.git
 curl -s https://getcomposer.org/installer | php
 php composer.php install
 ~~~~~
+
+
+
+
+
+## Folder Structure
+
+After running SG you will find following folders in your target folder.
+~~~~~
++ static
+  + styles
+  + scripts
+  + images
+  + json
++ albums
+  + your-album-01
+  + ...
++ index.html
+~~~~~
