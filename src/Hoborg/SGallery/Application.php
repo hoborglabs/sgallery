@@ -31,7 +31,17 @@ class Application extends ConsoleApplication {
 		}
 
 		$this->configuration = parse_ini_file($this->configRoot . '/properties.ini', false);
+
+		// i18n
+		$i18nKey = empty($this->configuration['language']) ? 'en' : $this->configuration['language'];
+		$i18n = parse_ini_file($this->configRoot . "/i18n/{$i18nKey}.ini", false);
+		$this->configuration['i18n'] = $i18n;
+
 		return $this->configuration;
+	}
+
+	public function getAppRoot() {
+		return $this->appRoot;
 	}
 
 	public function renderError($error, OutputInterface $output = null) {

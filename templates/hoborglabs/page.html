@@ -1,0 +1,27 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>{{page.title}}</title>
+	<link rel="stylesheet" type="text/css" media="all" href="/static/styles/hoborglabs/css/main.css">
+	<meta name="viewport" content="initial-scale = 1.0,maximum-scale = 1.0" />
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			{{{ body }}}
+		</div>
+	</div>
+	<div class="container">
+		<div class="page-footer">
+			copyright 2012 - Wojtek Olędzki.
+			<span class="pull-right">
+				<a href="http://hoborglabs.com">Hoborglabs</a>
+			</span>
+		</div>
+	</div>
+	<script type="text/javascript">
+		window.SG = {};
+		window.SG.config = {{{ page.config }}};
+	</script>
+</body>
+</html>

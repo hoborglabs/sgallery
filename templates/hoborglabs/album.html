@@ -1,0 +1,32 @@
+<h2>{{ i18n.album }} - {{ name }}</h2>
+<p class="lead">{{ meta }}</p>
+<ul class="breadcrumb">
+	{{#slugs}}
+	<li class="{{class}}">
+		{{# href }}<a href="/albums{{ href }}">{{/href}}
+			{{ text }}
+		{{# href }}</a> <span class="divider">/</span>{{/href}}
+	</li>
+	{{/slugs}}
+</ul>
+
+<h3>{{ i18n.albums }}</h3>
+<div>
+	<ul class="thumbnails">
+	{{#albums}}
+		<li class="span6">
+			<a href="/albums/{{ slug }}"><img src="{{ cover }}" class="img-polaroid" /></a>
+			<p>{{ name }}</p>
+		</li>
+	{{/albums}}
+	</ul>
+</div>
+
+<h3>{{ i18n.photos }}</h3>
+<div>
+	<ul>
+		{{#photos}}
+			<li><a href="{{ href }}"><img src="{{ src }}" class="img-polaroid" /></a><p>{{ caption }}</p></li>
+		{{/photos}}
+	</ul>
+</div>

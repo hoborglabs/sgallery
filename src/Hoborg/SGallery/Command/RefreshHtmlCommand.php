@@ -9,9 +9,13 @@ use Symfony\Component\Console\Command\Command,
 
 class RefreshHtmlCommand extends Command {
 
+	protected $photoExtensions = array('jpg', 'jpeg', 'png', 'gif');
+
 	protected function configure() {
 		$this->setName('refresh:html')
 			->setDescription('Refresh gallery HTML.');
+
+		$this->m = new \Mustache_Engine();
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
@@ -25,14 +29,24 @@ class RefreshHtmlCommand extends Command {
 		$this->processFolders($folders);
 	}
 
-	protected function scanSourceForFolders($folder) {
-		$dir = scandir($folder);
-		$folders = array(
-			'name' => $folder,
-			'path' => $folder,
+	protected function scanSourceForFolders($folderPath) {
+		$dir = scandir($folderPath);
+		$config = $this->getApplication()->getConfiguration();
+		$folder = array(
+			'name' => strtolower(basename($folderPath)),
+			'path' => $folderPath,
+			'slug' => '',
 			'meta' => '',
+			'cover' => '',
 			'folders' => array(),
 		);
+
+		// get relative path for html
+		$slug = str_replace($config['source'], '', $folder['path']);
+		$slug = strtolower(str_replace(' ', '-', $slug));
+		$slug = preg_replace('/-+/', '-', $slug);
+		$slug = preg_replace('/[^a-zA-Z0-9\/\-_]/', '', $slug);
+		$folder['slug'] = $slug;
 
 		foreach ($dir as $entry) {
 			// skip . .. and any file/folder that starts with "."
@@ -40,15 +54,21 @@ class RefreshHtmlCommand extends Command {
 				continue;
 			}
 
-			if (is_dir("{$folder}/{$entry}")) {
-				$folders['folders'][] = $this->scanSourceForFolders("{$folder}/{$entry}");
+			if (is_dir("{$folderPath}/{$entry}")) {
+				$folder['folders'][] = $this->scanSourceForFolders("{$folderPath}/{$entry}");
 				continue;
 			}
 
+			if (empty($folder['cover'])) {
+				$ext = strtolower(preg_replace('/.*\.([^.]+)$/', '$1', $entry));
+				if (in_array($ext, $this->photoExtensions)) {
+					$folder['cover'] = '/static/thumbnails/' . md5("{$folderPath}/{$entry}") . ".{$ext}";
+				}
+			}
 			// get meta
 		}
 
-		return $folders;
+		return $folder;
 	}
 
 	protected function processFolders(array $folder) {
@@ -60,13 +80,59 @@ class RefreshHtmlCommand extends Command {
 
 	protected function generateAlbum(array $folder) {
 		$config = $this->getApplication()->getConfiguration();
+		$albumRoot = $config['target'] . '/albums/' . $folder['slug'];
 
-		// get relative path for html
-		$snail = str_replace($config['source'], '', $folder['name']);
-		$snail = strtolower(str_replace(' ', '-', $snail));
-		$snail = preg_replace('/-+/', '-', $snail);
-		$snail = preg_replace('/[^a-zA-Z0-9\/\-_]/', '', $snail);
-		var_dump($snail);
+		if (!is_dir($albumRoot)) {
+			mkdir($albumRoot, 0755, 1);
+		}
+
+		$tempalteRoot = $this->getApplication()->getAppRoot() . '/templates/' . $config['skin'];
+		$albumHtml = $this->mustacheRender("{$tempalteRoot}/album.html", $this->getAlbumData($folder));
+		$pageHtml = $this->mustacheRender("{$tempalteRoot}/page.html", array('body' => $albumHtml));
+
+		file_put_contents("{$albumRoot}/index.html", $pageHtml);
+	}
+
+	protected function getAlbumData(array $folder) {
+		$album = array();
+		$config = $this->getApplication()->getConfiguration();
+
+		$parts = explode('/', $folder['slug']);
+		$slugs = array();
+		if (!empty($parts)) {
+			$slug = '';
+			$slugs[] = array(
+				'href' => '/',
+				'text' => $config['i18n']['nav.home']
+			);
+			foreach ($parts as $part) {
+				if (empty($part)) {
+					continue;
+				}
+				$slug .= "/{$part}";
+				$slugs[] = array(
+					'href' => $slug,
+					'text' => $part,
+				);
+			}
+
+			$last = array_pop($slugs);
+			unset($last['href']);
+			$slugs[] = $last;
+		}
+
+		$album = array(
+			'i18n' => $config['i18n'],
+			'name' => $folder['name'],
+			'albums' => $folder['folders'],
+			'slugs' => $slugs,
+		);
+
+		return $album;
+	}
+
+	protected function mustacheRender($template, array $data) {
+		return $this->m->render(file_get_contents($template), $data);
 	}
 
 	protected function check(array $config) {
@@ -80,4 +146,5 @@ class RefreshHtmlCommand extends Command {
 			throw new \Exception('Target folder is not writable', 1);
 		}
 	}
+
 }
