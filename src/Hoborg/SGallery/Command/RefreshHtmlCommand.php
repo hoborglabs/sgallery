@@ -15,7 +15,7 @@ class RefreshHtmlCommand extends Command {
 		$this->setName('refresh:html')
 			->setDescription('Refresh gallery HTML.');
 
-		$this->m = new \Mustache_Engine();
+		$this->m = new \Mustache_Engine(array('charset' => 'UTF-8'));
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
@@ -24,6 +24,7 @@ class RefreshHtmlCommand extends Command {
 		// check source and target folders
 		$this->check($config);
 
+		$output->writeln("<info>Refresh HTML Files.</info>");
 		$output->writeln("scanning {$config['source']}");
 		$folders = $this->scanSourceForFolders($config['source']);
 		$this->processFolders($folders);
@@ -88,7 +89,7 @@ class RefreshHtmlCommand extends Command {
 
 		$tempalteRoot = $this->getApplication()->getAppRoot() . '/templates/' . $config['skin'];
 		$albumHtml = $this->mustacheRender("{$tempalteRoot}/album.html", $this->getAlbumData($folder));
-		$pageHtml = $this->mustacheRender("{$tempalteRoot}/page.html", array('body' => $albumHtml));
+		$pageHtml = $this->mustacheRender("{$tempalteRoot}/page.html", $this->getPageData($folder, $albumHtml));
 
 		file_put_contents("{$albumRoot}/index.html", $pageHtml);
 	}
@@ -125,10 +126,35 @@ class RefreshHtmlCommand extends Command {
 			'i18n' => $config['i18n'],
 			'name' => $folder['name'],
 			'albums' => $folder['folders'],
+			'has_albums' => !empty($folder['folders']),
 			'slugs' => $slugs,
 		);
 
 		return $album;
+	}
+
+	protected function getPageData(array $folder, $body) {
+		$config = $this->getApplication()->getConfiguration();
+		$page = array(
+			'body' => $body,
+			'page' => array(
+				'title' => $folder['name'],
+				'config' => null,
+			),
+		);
+
+		$i = 0;
+		$jsonFileName = '/static/json/' . md5($folder['path']) . '-'
+				. str_pad($i, 6, '0', STR_PAD_LEFT) . '.json';
+		if (is_readable($config['target'] . $jsonFileName)) {
+			$page['page']['config'] = json_encode(array(
+				'photos' => array(
+					$jsonFileName
+				),
+			));
+		}
+
+		return $page;
 	}
 
 	protected function mustacheRender($template, array $data) {
