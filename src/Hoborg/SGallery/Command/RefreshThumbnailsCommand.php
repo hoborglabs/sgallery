@@ -69,6 +69,7 @@ class RefreshThumbnailsCommand extends Command {
 	protected function generateThumbnail($image) {
 		$ext = strtolower(preg_replace('/.*\.([^.]+)$/', '$1', $image));
 		$config = $this->getApplication()->getConfiguration();
+		$imageQuality = isset($config['thumbnails.quality']) ? $config['thumbnails.quality'] : 75;
 		$cacheThumb = $config['target'] . '/static/thumbnails/' . md5($image) . ".{$ext}";
 
 		// check if cache file exists
@@ -90,10 +91,10 @@ class RefreshThumbnailsCommand extends Command {
 				$source = imagecreatefromjpeg($image);
 
 				// Resize
-				imagecopyresized($thumb, $source, 0, 0, $x, $y, 200, 200, $l, $l);
+				imagecopyresampled($thumb, $source, 0, 0, $x, $y, 200, 200, $l, $l);
 
 				// Output
-				imagejpeg($thumb, $cacheThumb);
+				imagejpeg($thumb, $cacheThumb, $imageQuality);
 				return true;
 			}
 		}
