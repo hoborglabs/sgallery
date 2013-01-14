@@ -42,6 +42,16 @@ curl -s https://getcomposer.org/installer | php
 php composer.php install
 ~~~~~
 
+Building JS
+~~~~~
+node scripts/r.js -o scripts/hoborglabs/app.build.js
+~~~~~
+
+Building CSS
+~~~~~
+recess --compress styles/hoborglabs/less/main.less > dist/static/styles/hoborglabs/css/main.css
+~~~~~
+
 
 
 
