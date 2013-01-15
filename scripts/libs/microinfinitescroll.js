@@ -26,7 +26,7 @@ define([], function() {
 			return;
 		}
 
-		var scrolledtonum = window.pageYOffset + myHeight + 2;
+		var scrolledtonum = window.pageYOffset + myHeight + 200;
 		var heightofbody = document.body.offsetHeight;
 		if (scrolledtonum >= heightofbody) {
 			killScroll = true;
