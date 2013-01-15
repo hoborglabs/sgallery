@@ -69,6 +69,22 @@ class RefreshHtmlCommand extends Command {
 			// get meta
 		}
 
+		$folder = $this->findCovers($folder);
+
+		return $folder;
+	}
+
+	protected function findCovers(array $folder) {
+		foreach ($folder['folders'] as $i => $subfolder) {
+			$folder['folders'][$i] = $this->findCovers($subfolder);
+		}
+
+		if (empty($folder['cover'])) {
+			if (!empty($folder['folders'])) {
+				$folder['cover'] = $folder['folders'][0]['cover'];
+			}
+		}
+
 		return $folder;
 	}
 
