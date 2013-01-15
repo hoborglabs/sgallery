@@ -42,6 +42,28 @@ curl -s https://getcomposer.org/installer | php
 php composer.php install
 ~~~~~
 
+Now copy CSS and JS to your vhost
+~~~~~
+cp -R dist/* /my/vhost/public/
+~~~~~
+
+Configure gallery
+~~~~~
+cp conf/properties.default.ini conf/properties.ini
+vim conf/properties.ini
+~~~~~
+
+Generate content
+~~~~~
+php sg.php refresh
+~~~~~
+
+
+
+
+
+## Development 
+
 Building JS
 ~~~~~
 node scripts/r.js -o scripts/hoborglabs/app.build.js
