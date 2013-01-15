@@ -46,7 +46,7 @@ define([], function() {
 		this.callbackFunction=callbackFunction;
 		this.url=url;
 		this.request = this.getRequest();
-		
+
 		if(this.request) {
 			var req = this.request;
 			req.onreadystatechange = this.bindFunction(this.stateChange, this);

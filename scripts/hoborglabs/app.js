@@ -33,29 +33,24 @@ require([
 	function Page(window) {
 		this.document = window.document;
 		this.config = window.SG.config;
-		this.onLoadCallbacks = [];
 		this.nextBatch = 0;
 
-		window.onload = this.onLoad.bind(this);
-		this.attachToPageOnLoad(this.loadImages.bind(this));
-		this.onLoad();
+		infiniteScroll.addHandler(this.loadImages.bind(this));
+		this.loadImages(function() {
+			infiniteScroll.start();
+		});
 	};
 
-	Page.prototype.onLoad = function(e) {
-		for (var i in this.onLoadCallbacks) {
-			this.onLoadCallbacks[i](e);
-		}
-	};
-
-	Page.prototype.attachToPageOnLoad = function(callback) {
-		this.onLoadCallbacks.push(callback);
-	};
-
-	Page.prototype.loadImages = function() {
+	Page.prototype.loadImages = function(callback) {
 		var photos = document.getElementById('photos');
 		ajax(this.config.photos[this.nextBatch++], function(data) {
 			var batch = JSON.parse(data);
 			photos.innerHTML = photos.innerHTML + batch.html;
+			if (callback) {
+				callback();
+			} else {
+				infiniteScroll.done();
+			}
 		});
 
 		if (this.nextBatch >= this.config.photos.length) {
@@ -64,7 +59,4 @@ require([
 	};
 
 	app.page = new Page(window);
-
-	infiniteScroll.addHandler(app.page.loadImages.bind(app.page));
-
 });

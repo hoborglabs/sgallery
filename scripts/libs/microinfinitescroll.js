@@ -5,12 +5,12 @@ define([], function() {
 
 	// Detect that we are at bottom of page, and call autoloading function
 	var killScroll = false;
-	
+
 	var handlers = [];
-	
+
 	var myWidth = 0,
 		myHeight = 0;
-	
+
 	if (typeof(window.innerWidth) == 'number') {
 		//Non-IE
 		myWidth = window.innerWidth;
@@ -26,27 +26,39 @@ define([], function() {
 			return;
 		}
 
+		detectPageEnd();
+	};
+
+	function detectPageEnd() {
 		var scrolledtonum = window.pageYOffset + myHeight + 200;
 		var heightofbody = document.body.offsetHeight;
+
 		if (scrolledtonum >= heightofbody) {
 			killScroll = true;
 			runHandlers();
 		}
-	};
+	}
 
 	function runHandlers() {
 		for (var i in handlers) {
 			handlers[i]();
 		}
-		killScroll = false;
 	}
 
 	exports.addHandler = function(handler) {
 		handlers.push(handler);
 	}
 
+	exports.done = function() {
+		killScroll = false;
+	}
+
 	exports.stop = function() {
 		window.onscroll = function() {};
+	}
+
+	exports.start = function() {
+		detectPageEnd();
 	}
 
 	return exports;
