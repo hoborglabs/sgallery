@@ -1,8 +1,9 @@
 
 require([
 	'libs/microajax',
-	'libs/json2'
-], function(ajax, JSON) {
+	'libs/json2',
+	'libs/microinfinitescroll'
+], function(ajax, JSON, infiniteScroll) {
 
 	if (!Function.prototype.bind) {
 		Function.prototype.bind = function (oThis) {
@@ -33,6 +34,7 @@ require([
 		this.document = window.document;
 		this.config = window.SG.config;
 		this.onLoadCallbacks = [];
+		this.nextBatch = 0;
 
 		window.onload = this.onLoad.bind(this);
 		this.attachToPageOnLoad(this.loadImages.bind(this));
@@ -51,12 +53,18 @@ require([
 
 	Page.prototype.loadImages = function() {
 		var photos = document.getElementById('photos');
-		ajax(this.config.photos[0], function(data) {
+		ajax(this.config.photos[this.nextBatch++], function(data) {
 			var batch = JSON.parse(data);
 			photos.innerHTML = photos.innerHTML + batch.html;
 		});
+
+		if (this.nextBatch >= this.config.photos.length) {
+			infiniteScroll.stop();
+		}
 	};
 
 	app.page = new Page(window);
+
+	infiniteScroll.addHandler(app.page.loadImages.bind(app.page));
 
 });

@@ -135,24 +135,24 @@ class RefreshHtmlCommand extends Command {
 
 	protected function getPageData(array $folder, $body) {
 		$config = $this->getApplication()->getConfiguration();
+		$pageConfig = array(
+			'photos' => array(),
+		);
 		$page = array(
 			'body' => $body,
 			'page' => array(
 				'title' => $folder['name'],
-				'config' => null,
+				'config' => '',
 			),
 		);
 
 		$i = 0;
-		$jsonFileName = '/static/json/' . md5($folder['path']) . '-'
-				. str_pad($i, 6, '0', STR_PAD_LEFT) . '.json';
-		if (is_readable($config['target'] . $jsonFileName)) {
-			$page['page']['config'] = json_encode(array(
-				'photos' => array(
-					$jsonFileName
-				),
-			));
+		$jsonFileName = '/static/json/' . md5($folder['path']) . '-000000.json';
+		while (is_readable($config['target'] . $jsonFileName)) {
+			$pageConfig['photos'][] = $jsonFileName;
+			$jsonFileName = '/static/json/' . md5($folder['path']) . '-' . str_pad(++$i, 6, '0', STR_PAD_LEFT) . '.json';
 		}
+		$page['page']['config'] = json_encode($pageConfig);
 
 		return $page;
 	}
