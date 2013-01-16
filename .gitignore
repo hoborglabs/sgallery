@@ -6,6 +6,8 @@
 
 *.ini
 !*.default.ini
+!conf/i18n/*.ini
+build.properties
 
 /composer.*
 !/composer.json
