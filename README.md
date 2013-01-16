@@ -39,12 +39,7 @@ php sg.php help
 ~~~~~
 git clone git://github.com/hoborglabs/sgallery.git
 curl -s https://getcomposer.org/installer | php
-php composer.php install
-~~~~~
-
-Now copy CSS and JS to your vhost
-~~~~~
-cp -R dist/* /my/vhost/public/
+php composer.phar install
 ~~~~~
 
 Configure gallery
@@ -53,9 +48,9 @@ cp conf/properties.default.ini conf/properties.ini
 vim conf/properties.ini
 ~~~~~
 
-Generate content
+Generate gallery content
 ~~~~~
-php sg.php refresh
+php src/sg.php update
 ~~~~~
 
 

@@ -7,10 +7,10 @@ use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Input\InputOption,
 	Symfony\Component\Console\Output\OutputInterface;
 
-class RefreshCommand extends Command {
+class UpdateCommand extends Command {
 
 	protected function configure() {
-		$this->setName('refresh')
+		$this->setName('update')
 			->setDescription('Refresh gallery files');
 	}
 
@@ -23,6 +23,7 @@ class RefreshCommand extends Command {
 		$this->getApplication()->get('refresh:thumbnails')->run($input, $output);
 		$this->getApplication()->get('refresh:json')->run($input, $output);
 		$this->getApplication()->get('refresh:html')->run($input, $output);
+		$this->getApplication()->get('install:assets')->run($input, $output);
 	}
 
 	protected function scanFolderForImages($folder) {

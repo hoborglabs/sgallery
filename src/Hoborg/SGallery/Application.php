@@ -56,7 +56,11 @@ class Application extends ConsoleApplication {
 	protected function getDefaultCommands() {
 		$commands = parent::getDefaultCommands();
 
-		$commands[] = new RefreshCommand();
+		$commands[] = new Command\InstallCommand();
+		$commands[] = new Command\InstallAssetsCommand();
+		$commands[] = new Command\InstallVendorsCommand();
+
+		$commands[] = new Command\UpdateCommand();
 		$commands[] = new Command\RefreshThumbnailsCommand();
 		$commands[] = new Command\RefreshHtmlCommand();
 		$commands[] = new Command\RefreshJsonCommand();
