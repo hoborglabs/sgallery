@@ -1,0 +1,103 @@
+<project name="Hoborg Commons" default="help" basedir=".">
+
+	<!-- optional environmental settings -->
+	<property file="build.properties" />
+
+	<!-- set default values if not already set in build.properties -->
+	<property name="dir.base" location="." />
+	<property name="dir.src" location="." />
+	<property name="dir.dist" location="./dist" />
+
+	<!-- Commands aliases -->
+	<property name="cmd.recess" value="recess" />
+	<property name="cmd.node" value="node" />
+
+	<target name="build"
+		depends="prepare, build.css, build.js"
+	>
+	
+	</target>
+
+	<target name="build.css"
+		description="Builds CSS file(s)."
+	>
+		<echo level="info">Building ${dir.src}/styles/hoborglabs/less/main.less</echo>
+		<exec executable="${cmd.recess}" output="${dir.dist}/static/styles/hoborglabs/css/main.css">
+			<arg line="--compress" />
+			<arg line="${dir.src}/styles/hoborglabs/less/main.less" />
+		</exec>
+
+		<!-- Copy gfx
+		<copy todir="${dir.static}/styles/gfx">
+			<fileset dir="${dir.base}/styles/less/bootstrap-2.2/img">
+				<include name="**.png" />
+			</fileset>
+		</copy>
+		 -->
+	</target>
+
+	<target name="build.js"
+		description="Builds JS file(s)."
+	>
+		<echo>Building ${dir.src}/scripts/hoborglabs/app.build.js</echo>
+		<exec executable="${cmd.node}">
+			<arg line="scripts/r.js" />
+			<arg line="-o" />
+			<arg line="${dir.src}/scripts/hoborglabs/app.build.js" />
+		</exec>
+	</target>
+
+	<target name="deploy.assets" if="dir.deploy"
+		description="Deploys gallery assets to `dir.deploy`"
+		depends="deploy.css, deploy.js"
+	>
+	</target>
+
+	<target name="deploy.css" if="dir.deploy">
+		<copy todir="${dir.deploy}">
+			<fileset dir="${dir.dist}">
+				<include name="static/styles/**/*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy.js" if="dir.deploy">
+		<copy todir="${dir.deploy}">
+			<fileset dir="${dir.dist}">
+				<include name="static/scripts/**/*" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="prepare">
+		<mkdir dir="${dir.dist}/static/styles/hoborglabs/css" />
+		<mkdir dir="${dir.dist}/static/scripts/hoborglabs" />
+	</target>
+
+	<target name="clear"
+		description="Clear dist folder and deploy folder if deploy.allowClear is set to true"
+		depends="clear.deploy"
+	>
+		<delete dir="${dir.dist}" includeemptydirs="true">
+			<include name="**/*" />
+		</delete>
+	</target>
+
+	<target name="clear.deploy"
+		description="Clears deploy folder"
+		if="deploy.allowClear"
+	>
+		<delete dir="${dir.deploy}">
+			<include name="**/*" />
+		</delete>
+	</target>
+
+	<!-- Help Message -->
+	<target name="help"
+		description="Prints this help"
+	>
+		<exec executable="ant">
+			<arg value="-p" />
+		</exec>
+	</target>
+</project>
