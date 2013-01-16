@@ -42,7 +42,7 @@ class InstallAssetsCommand extends Command {
 	protected function copyCSS(array $config) {
 		$sourceDir = $this->getApplication()->getAppRoot() . '/dist/static/styles/hoborglabs/css';
 		$targetDir = $config['target'] . '/static/styles/hoborglabs/css';
-		copy($sourceDir . '/main.css', $targetDir . 'main.css');
+		copy($sourceDir . '/main.css', $targetDir . '/main.css');
 	}
 
 	protected function check(array $config) {
