@@ -1,7 +1,7 @@
 {{#photos}}
 <li class="span6">
-	<a href="{{ href }}">
-		<img class="img-polaroid" src="{{ src }}" />
+	<a href="/img-proxy.php{{ full-size }}">
+		<img class="img-polaroid" src="{{ src }}" data-full-size="{{ full-size }}" />
 	</a>
 </li>
 {{/photos}}

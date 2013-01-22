@@ -1,5 +1,6 @@
 <h2>{{ i18n.album }} - {{ name }}</h2>
 <p class="lead">{{ meta }}</p>
+
 <ul class="breadcrumb">
 	{{#slugs}}
 	<li class="{{class}}">
@@ -28,7 +29,7 @@
 <div>
 	<ul class="thumbnails" id="photos">
 		{{#photos}}
-			<li><a href="{{ href }}"><img src="{{ src }}" class="img-polaroid" /></a><p>{{ caption }}</p></li>
+			<li><a href="{{ href }}" class="photo"><img src="{{ src }}" class="img-polaroid" /></a><p>{{ caption }}</p></li>
 		{{/photos}}
 	</ul>
 </div>

@@ -27,22 +27,33 @@ class InstallAssetsCommand extends Command {
 		// check source and target folders
 		$this->check($config);
 
-		$this->copyJS($config);
-		$this->copyCSS($config);
+		$this->copyJs($config);
+		$this->copyCss($config);
+		$this->copyPhp($config);
 
 		$output->writeln("<info>  done.</info>");
 	}
 
-	protected function copyJS(array $config) {
+	protected function copyJs(array $config) {
 		$sourceDir = $this->getApplication()->getAppRoot() . '/dist/static/scripts/hoborglabs';
 		$targetDir = $config['target'] . '/static/scripts/hoborglabs';
-		copy($sourceDir . '/app.js', $targetDir . 'app.js');
+		copy($sourceDir . '/app.js', $targetDir . '/app.js');
 	}
 
-	protected function copyCSS(array $config) {
+	protected function copyCss(array $config) {
 		$sourceDir = $this->getApplication()->getAppRoot() . '/dist/static/styles/hoborglabs/css';
 		$targetDir = $config['target'] . '/static/styles/hoborglabs/css';
 		copy($sourceDir . '/main.css', $targetDir . '/main.css');
+	}
+
+	protected function copyPhp(array $config) {
+		$sourceDir = $this->getApplication()->getAppRoot() . '/dist/';
+		$targetDir = $config['target'] . '/';
+		copy($sourceDir . '/img-proxy.php', $targetDir . '/img-proxy.php');
+
+		file_put_contents($targetDir . '/img-proxy.php',
+				'function getConfig() { return array(\'source\' => \'' . addslashes($config['source']) . '\'); }'
+				, FILE_APPEND);
 	}
 
 	protected function check(array $config) {

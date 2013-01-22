@@ -10,14 +10,15 @@
   bottom: 0;
   left: 0;
   z-index: @zindexModalBackdrop;
-  background-color: @black;
+  background-color: rgba(0,0,0,0.8);
+  display:block;
   // Fade for backdrop
-  &.fade { opacity: 0; }
+  &.fade { opacity: 0; display:none; }
 }
 
 .modal-backdrop,
 .modal-backdrop.fade.in {
-  .opacity(80);
+  .opacity(100);
 }
 
 // Base modal
@@ -39,7 +40,7 @@
   outline: none;
 
   &.fade {
-    .transition(e('opacity .3s linear, top .3s ease-out'));
+    .transition(e('opacity 1s linear, top 1s ease-out'));
     top: -25%;
   }
   &.fade.in { top: 10%; }

@@ -11,9 +11,10 @@
 	<!-- Commands aliases -->
 	<property name="cmd.recess" value="recess" />
 	<property name="cmd.node" value="node" />
+	<property name="cmd.php" value="php" />
 
 	<target name="build"
-		depends="prepare, build.css, build.js"
+		depends="prepare, build.css, build.js, build.php"
 	>
 	
 	</target>
@@ -44,6 +45,16 @@
 			<arg line="scripts/r.js" />
 			<arg line="-o" />
 			<arg line="${dir.src}/scripts/hoborglabs/app.build.js" />
+		</exec>
+	</target>
+
+	<target name="build.php"
+		description="Build PHP files"
+	>
+		<echo level="info">Building PHP files</echo>
+		<exec executable="${cmd.php}" output="${dir.dist}/img-proxy.php">
+			<arg line="-w" />
+			<arg line="${dir.src}/src/img-proxy.php" />
 		</exec>
 	</target>
 

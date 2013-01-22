@@ -1,9 +1,10 @@
 
 require([
-	'libs/microajax',
-	'libs/json2',
-	'libs/microinfinitescroll'
-], function(ajax, JSON, infiniteScroll) {
+	'libs/ready',
+	'libs/mousetrap',
+	'hoborglabs/album',
+	'hoborglabs/overlay'
+], function(ready, mousetrap, Album, Overlay) {
 
 	if (!Function.prototype.bind) {
 		Function.prototype.bind = function (oThis) {
@@ -28,35 +29,10 @@ require([
 		};
 	}
 
-	var app = window.app = {};
+	ready(function() {
+		var album = new Album.Album(window);
+		mousetrap.bind('?', function() {Overlay.show('help'); });
+		mousetrap.bind('esc', function() {Overlay.deactivate(); });
+	});
 
-	function Page(window) {
-		this.document = window.document;
-		this.config = window.SG.config;
-		this.nextBatch = 0;
-
-		infiniteScroll.addHandler(this.loadImages.bind(this));
-		this.loadImages(function() {
-			infiniteScroll.start();
-		});
-	};
-
-	Page.prototype.loadImages = function(callback) {
-		var photos = document.getElementById('photos');
-		ajax(this.config.photos[this.nextBatch++], function(data) {
-			var batch = JSON.parse(data);
-			photos.innerHTML = photos.innerHTML + batch.html;
-			if (callback) {
-				callback();
-			} else {
-				infiniteScroll.done();
-			}
-		});
-
-		if (this.nextBatch >= this.config.photos.length) {
-			infiniteScroll.stop();
-		}
-	};
-
-	app.page = new Page(window);
 });

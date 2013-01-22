@@ -66,7 +66,7 @@ class RefreshJsonCommand extends Command {
 			$ext = strtolower(preg_replace('/.*?\.([^.]+)$/', '$1', $image));
 			$cacheFile = md5($image) . ".{$ext}";
 			$batch[] = array(
-				'href' => '#',
+				'full-size' => str_replace($config['source'], '', $image),
 				'src' => "/static/thumbnails/{$cacheFile}",
 			);
 
