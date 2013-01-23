@@ -14,9 +14,11 @@ define([
 		this.previewImgBaseUrl = '/img-proxy.php';
 		this.config = window.SG.config;
 		this.nextBatch = 0;
+		this.el = this.document.getElementById('album')
+		this.loadingEl = this.el.getElementsByClassName('well').item(0);
 
 		var album = this;
-		bean.on(this.document, 'click', 'a', function(e) { return album.handleClick(e); });
+		bean.on(this.el, 'click', 'a', function(e) { return album.handleClick(e); });
 
 		infiniteScroll.addHandler(this.loadImages.bind(this));
 		this.loadImages(function() {
@@ -43,6 +45,11 @@ define([
 
 	Album.prototype.loadImages = function(callback) {
 		var photos = document.getElementById('photos');
+
+		// show "loading" bar
+		var loadingEl = this.loadingEl;
+		loadingEl.style.display = 'block';
+
 		ajax(this.config.photos[this.nextBatch++], function(data) {
 			var batch = JSON.parse(data);
 			photos.innerHTML = photos.innerHTML + batch.html;
@@ -50,6 +57,7 @@ define([
 				callback();
 			} else {
 				infiniteScroll.done();
+				loadingEl.style.display = 'none';
 			}
 		});
 

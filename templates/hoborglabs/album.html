@@ -1,35 +1,41 @@
-<h2>{{ i18n.album }} - {{ name }}</h2>
-<p class="lead">{{ meta }}</p>
+<div id="album">
 
-<ul class="breadcrumb">
-	{{#slugs}}
-	<li class="{{class}}">
-		{{# href }}<a href="/albums{{ href }}">{{/href}}
-			{{ text }}
-		{{# href }}</a> <span class="divider">/</span>{{/href}}
-	</li>
-	{{/slugs}}
-</ul>
-
-{{#has_albums}}
-<h3>{{ i18n.albums }}</h3>
-<div>
-	<ul class="thumbnails">
-	{{#albums}}
-		<li class="span6 album">
-			<a href="/albums/{{ slug }}"><img src="{{ cover }}" /></a>
-			<h4 title="{{ name }}">{{ name }}</h4>
+	<h2>{{ i18n.album }} - {{ name }}</h2>
+	<p class="lead">{{ meta }}</p>
+	
+	<ul class="breadcrumb">
+		{{#slugs}}
+		<li class="{{class}}">
+			{{# href }}<a href="/albums{{ href }}">{{/href}}
+				{{ text }}
+			{{# href }}</a> <span class="divider">/</span>{{/href}}
 		</li>
-	{{/albums}}
+		{{/slugs}}
 	</ul>
-</div>
-{{/has_albums}}
-
-<h3>{{ i18n.photos }}</h3>
-<div>
-	<ul class="thumbnails" id="photos">
-		{{#photos}}
-			<li><a href="{{ href }}" class="photo"><img src="{{ src }}" class="img-polaroid" /></a><p>{{ caption }}</p></li>
-		{{/photos}}
-	</ul>
+	
+	{{#has_albums}}
+	<h3>{{ i18n.albums }}</h3>
+	<div>
+		<ul class="thumbnails">
+		{{#albums}}
+			<li class="span6 album">
+				<a href="/albums/{{ slug }}"><img src="{{ cover }}" /></a>
+				<h4 title="{{ name }}">{{ name }}</h4>
+			</li>
+		{{/albums}}
+		</ul>
+	</div>
+	{{/has_albums}}
+	
+	<h3>{{ i18n.photos }}</h3>
+	<div>
+		<ul class="thumbnails" id="photos">
+			{{#photos}}
+				<li><a href="{{ href }}" class="photo"><img src="{{ src }}" class="img-polaroid" /></a><p>{{ caption }}</p></li>
+			{{/photos}}
+		</ul>
+		<div class="well" style="display:none;">
+			<span>Loading...</span>
+		</div>
+	</div>
 </div>
