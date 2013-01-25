@@ -21,19 +21,22 @@ define([], function() {
 		myHeight = document.documentElement.clientHeight;
 	}
 
-	window.onscroll = function() {
+	window.onscroll = function(e) {
 		if (killScroll) {
 			return;
 		}
 
-		detectPageEnd();
+		detectPageEnd(e);
 	};
 
-	function detectPageEnd() {
+	function detectPageEnd(e) {
 		var scrolledtonum = window.pageYOffset + myHeight + 200;
 		var heightofbody = document.body.offsetHeight;
 
 		if (scrolledtonum >= heightofbody) {
+			e.stop();
+			e.preventDefault();
+			e.stopImmediatePropagation();
 			killScroll = true;
 			runHandlers();
 		}
