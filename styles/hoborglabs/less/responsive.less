@@ -11,7 +11,7 @@
 // --------------------------------------------------
 
 
-@media (max-width: 767px) {
+@media (max-width: 940px) {
 
   // Padding to set content in a bit
   body {
@@ -56,14 +56,17 @@
     width: 100%;
   }
   // Undo negative margin on rows and thumbnails
-  .row,
-  .thumbnails {
+  .row {
     margin-left: 0;
+  }
+  .thumbnails {
+    margin-left: -2%;
   }
   .thumbnails > li {
     //float: none;
-    margin-left: 0; // Reset the default margin for all li elements when no .span* classes are present
+    margin-left: 2%;
   }
+
   // Make all grid-sized elements block level again
   [class*="span"],
   .uneditable-input[class*="span"], // Makes uneditable inputs full-width when using grid sizing
@@ -74,16 +77,18 @@
     margin-left: 0;
     .box-sizing(border-box);
   }
-  .span12,
-  .row-fluid .span12 {
-    width: 100%;
-    .box-sizing(border-box);
-  }
-  .row-fluid [class*="offset"]:first-child {
+	.span12,
+	.row-fluid .span12 {
+		width: 100%;
+		.box-sizing(border-box);
+	}
+	.row-fluid [class*="offset"]:first-child {
 		margin-left: 0;
 	}
-	.span6 {
-		width: 50%;
+	.thumbnails > li.span6,
+	.span6,
+	.row-fluid .span6 {
+		width: 31%;
 	}
 
   // FORM FIELDS
@@ -97,17 +102,6 @@
   textarea[class*="span"],
   .uneditable-input {
     .input-block-level();
-  }
-  // But don't let it screw up prepend/append inputs
-  .input-prepend input,
-  .input-append input,
-  .input-prepend input[class*="span"],
-  .input-append input[class*="span"] {
-    display: inline-block; // redeclare so they don't wrap to new lines
-    width: auto;
-  }
-  .controls-row [class*="span"] + [class*="span"] {
-    margin-left: 0;
   }
 
 }
@@ -143,17 +137,28 @@
     margin-right: 0;
     margin-left: 0;
   }
+	.thumbnails > li.span6,
+	.span6,
+	.row-fluid .span6 {
+		width: 48%;
+	}
 }
 
 @media (max-width: 320px) {
+	
+	.thumbnails {
+		margin-left: 0;
+	}
+	.thumbnails > li {
+		float: none;
+		margin-left: 0; // Reset the default margin for all li elements when no .span* classes are present
+	}
+	.thumbnails > li.span6,
 	.span6 {
 		width: 100%;
 	}
 	.thumbnails img {
 		width: 100%;
 		margin: 0 4px 0 0;
-	}
-	.thumbnails .img-polaroid {
-		margin-left: -5px;
 	}
 }

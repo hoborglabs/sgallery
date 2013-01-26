@@ -34,9 +34,13 @@ define([], function() {
 		var heightofbody = document.body.offsetHeight;
 
 		if (scrolledtonum >= heightofbody) {
-			e.stop();
-			e.preventDefault();
-			e.stopImmediatePropagation();
+			if (e) {
+				console.log(e);
+				e.preventDefault && e.preventDefault();
+				e.stopPropagation && e.stopPropagation();
+				e.stopImmediatePropagation && e.stopImmediatePropagation();
+				e.returnValue = false;
+			}
 			killScroll = true;
 			runHandlers();
 		}
