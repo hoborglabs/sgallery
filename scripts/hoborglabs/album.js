@@ -27,7 +27,6 @@ define([
 	}
 
 	Album.prototype.handleClick = function(e) {
-		console.log(e.target);
 
 		var fullImg = e.target.getAttribute('data-full-size');
 		if (fullImg) {
@@ -44,6 +43,12 @@ define([
 	};
 
 	Album.prototype.loadImages = function(callback) {
+
+		if (this.nextBatch >= this.config.photos.length) {
+			infiniteScroll.stop();
+			return;
+		}
+
 		var photos = document.getElementById('photos');
 
 		// show "loading" bar
@@ -53,17 +58,14 @@ define([
 		ajax(this.config.photos[this.nextBatch++], function(data) {
 			var batch = JSON.parse(data);
 			photos.innerHTML = photos.innerHTML + batch.html;
+			loadingEl.style.display = 'none';
+
 			if (callback) {
 				callback();
 			} else {
 				infiniteScroll.done();
-				loadingEl.style.display = 'none';
 			}
 		});
-
-		if (this.nextBatch >= this.config.photos.length) {
-			infiniteScroll.stop();
-		}
 	};
 
 	exports.Album = Album;

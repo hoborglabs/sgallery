@@ -35,7 +35,6 @@ define([], function() {
 
 		if (scrolledtonum >= heightofbody) {
 			if (e) {
-				console.log(e);
 				e.preventDefault && e.preventDefault();
 				e.stopPropagation && e.stopPropagation();
 				e.stopImmediatePropagation && e.stopImmediatePropagation();
