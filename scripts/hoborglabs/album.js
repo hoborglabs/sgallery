@@ -20,6 +20,9 @@ define([
 		var album = this;
 		bean.on(this.el, 'click', 'a', function(e) { return album.handleClick(e); });
 
+		// bind click on preview
+		bean.on(this.document.getElementById('overlay'), 'click', function(e) { overlay.deactivate(); });
+
 		infiniteScroll.addHandler(this.loadImages.bind(this));
 		this.loadImages(function() {
 			infiniteScroll.start();
