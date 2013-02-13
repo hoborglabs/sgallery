@@ -38,7 +38,7 @@ class RefreshHtmlCommand extends Command {
 			'path' => $folderPath,
 			'slug' => '',
 			'meta' => '',
-			'cover' => '',
+			'cover' => '/static/thumbnails/' . md5($folderPath) . "-cvr.jpg",
 			'folders' => array(),
 		);
 
@@ -49,7 +49,6 @@ class RefreshHtmlCommand extends Command {
 		$slug = preg_replace('/[^a-zA-Z0-9\/\-_]/', '', $slug);
 		$folder['slug'] = $slug;
 
-		$folder['cover'] = '/static/thumbnails/' . md5($folderPath) . "-cvr.jpg";
 		foreach ($dir as $entry) {
 			// skip . .. and any file/folder that starts with "."
 			if (0 === strpos($entry, '.')) {

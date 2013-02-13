@@ -15,12 +15,13 @@ class RefreshCoversCommand extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$output->writeln("\n<info>Refresh Album Covers.</info>");
 		$config = $this->getApplication()->getConfiguration();
 
 		// check source and target folders
 		$this->check($config);
 
-		$output->writeln("<info>Refresh Album Covers.</info>");
 		$output->writeln("scanning {$config['source']} for albums");
 
 		$albums = $this->getFolders($config['source']);
@@ -104,11 +105,13 @@ class RefreshCoversCommand extends Command {
 
 		// pick 1, 2 or 4 photos
 		$coverImages = array();
-		$coverImagesCount = 1;
-		if (count($images) > 20) {
-			$coverImagesCount = 4;
-		} else if (count($images) > 10) {
+		$coverImagesCount = 4;
+		$limit2tile = isset($config['covers.limit.2tile']) ? $config['covers.limit.2tile'] : 16;
+		$limit1tile = isset($config['covers.limit.1tile']) ? $config['covers.limit.1tile'] : 8;
+		if (count($images) < $limit2tile) {
 			$coverImagesCount = 2;
+		} else if (count($images) < $limit1tile) {
+			$coverImagesCount = 1;
 		}
 		for ($i = 0; $i < $coverImagesCount; $i++) {
 			$rand = rand(0, count($images) - 1);
@@ -125,7 +128,7 @@ class RefreshCoversCommand extends Command {
 
 		$config = $this->getApplication()->getConfiguration();
 		$coverQuality = isset($config['thumbnails.quality']) ? $config['thumbnails.quality'] : 75;
-		$coverSize = empty($config['thumbnails.size']) ? $config['thumbnails.size'] : 230;
+		$coverSize = isset($config['thumbnails.size']) ? $config['thumbnails.size'] : 230;
 		$coverFileName = $config['target'] . '/static/thumbnails/' . md5($folder) . '-cvr.jpg';
 
 		if (count($coverImages) == 1) {
@@ -139,10 +142,20 @@ class RefreshCoversCommand extends Command {
 		}
 
 		if (count($thumbs) == 4) {
-			imagecopyresampled($cover, $thumbs[0], 0, 0, 0, 0, $coverSize/2, $coverSize/2, $coverSize, $coverSize);
-			imagecopyresampled($cover, $thumbs[1], $coverSize/2, 0, 0, 0, $coverSize/2, $coverSize/2, $coverSize, $coverSize);
-			imagecopyresampled($cover, $thumbs[2], 0, $coverSize/2, 0, 0, $coverSize/2, $coverSize/2, $coverSize, $coverSize);
-			imagecopyresampled($cover, $thumbs[3], $coverSize/2, $coverSize/2, 0, 0, $coverSize/2, $coverSize/2, $coverSize, $coverSize);
+			imagecopyresampled($cover, $thumbs[0], 0, 0,                       0, 0,
+					$coverSize/2, $coverSize/2, $coverSize, $coverSize);
+			imagecopyresampled($cover, $thumbs[1], $coverSize/2, 0,            0, 0,
+					$coverSize/2, $coverSize/2, $coverSize, $coverSize);
+			imagecopyresampled($cover, $thumbs[2], 0, $coverSize/2,            0, 0,
+					$coverSize/2, $coverSize/2, $coverSize, $coverSize);
+			imagecopyresampled($cover, $thumbs[3], $coverSize/2, $coverSize/2, 0, 0,
+					$coverSize/2, $coverSize/2, $coverSize, $coverSize);
+		}
+		if (count($thumbs) == 2) {
+			imagecopyresampled($cover, $thumbs[0], 0, 0,            0, $coverSize/4,
+					$coverSize, $coverSize/2, $coverSize, $coverSize/2);
+			imagecopyresampled($cover, $thumbs[1], 0, $coverSize/2, 0, $coverSize/4,
+					$coverSize, $coverSize/2, $coverSize, $coverSize/2);
 		}
 
 		// Output
