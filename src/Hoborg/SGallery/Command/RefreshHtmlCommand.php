@@ -49,6 +49,7 @@ class RefreshHtmlCommand extends Command {
 		$slug = preg_replace('/[^a-zA-Z0-9\/\-_]/', '', $slug);
 		$folder['slug'] = $slug;
 
+		$folder['cover'] = '/static/thumbnails/' . md5($folderPath) . "-cvr.jpg";
 		foreach ($dir as $entry) {
 			// skip . .. and any file/folder that starts with "."
 			if (0 === strpos($entry, '.')) {
@@ -60,12 +61,6 @@ class RefreshHtmlCommand extends Command {
 				continue;
 			}
 
-			if (empty($folder['cover'])) {
-				$ext = strtolower(preg_replace('/.*\.([^.]+)$/', '$1', $entry));
-				if (in_array($ext, $this->photoExtensions)) {
-					$folder['cover'] = '/static/thumbnails/' . md5("{$folderPath}/{$entry}") . ".{$ext}";
-				}
-			}
 			// get meta
 		}
 

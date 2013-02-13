@@ -11,6 +11,8 @@ class RefreshJsonCommand extends Command {
 
 	protected $photoExtensions = array('jpg', 'jpeg', 'png', 'gif');
 
+	protected $progressOut = null;
+
 	protected function configure() {
 		$this->setName('refresh:json')
 			->setDescription('Refresh gallery HTML.');
@@ -20,12 +22,15 @@ class RefreshJsonCommand extends Command {
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$config = $this->getApplication()->getConfiguration();
+		$this->progressOut = new \Hoborg\SGallery\Output\Progress($output, $this->countFolders($config['source']));
 
 		// check source and target folders
 		$this->check($config);
+		$this->output = $output;
 
 		$output->writeln("<info>Refresh JSON Files.</info>");
 		$this->scanFolderForImages($config['source']);
+		$output->writeln("\ndone.");
 	}
 
 	protected function scanFolderForImages($folderPath) {
@@ -62,6 +67,7 @@ class RefreshJsonCommand extends Command {
 			'path' => $folderPath,
 			'html' => '',
 		);
+
 		foreach ($images as $image) {
 			$ext = strtolower(preg_replace('/.*?\.([^.]+)$/', '$1', $image));
 			$cacheFile = md5($image) . ".{$ext}";
@@ -79,12 +85,15 @@ class RefreshJsonCommand extends Command {
 				$batch = array();
 			}
 		}
+		// the last batch
 		if (count($batch) > 0) {
 			$jsonFileName = $config['target'] . '/static/json/' . md5($folderPath) . '-'
 			. str_pad($i, 6, '0', STR_PAD_LEFT) . '.json';
 			$json['html'] = $this->m->render(file_get_contents($batchTemplate), array('photos' => $batch));
 			file_put_contents($jsonFileName, json_encode($json));
 		}
+
+		$this->progressOut->printProgress();
 	}
 
 	protected function check(array $config) {
@@ -102,5 +111,24 @@ class RefreshJsonCommand extends Command {
 				throw new \Exception('Can not create ' . $config['target'] . '/static/json', 1);
 			}
 		}
+	}
+
+	protected function countFolders($folder) {
+		$count = 1;
+		$dir = scandir($folder);
+
+		foreach ($dir as $entry) {
+			// skip . .. and any file/folder that starts with "."
+			if (0 === strpos($entry, '.')) {
+				continue;
+			}
+
+			if (is_dir("{$folder}/{$entry}")) {
+				$count += $this->countFolders("{$folder}/{$entry}");
+				continue;
+			}
+		}
+
+		return $count;
 	}
 }

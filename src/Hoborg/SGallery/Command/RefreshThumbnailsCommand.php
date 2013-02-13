@@ -20,24 +20,18 @@ class RefreshThumbnailsCommand extends Command {
 		// check source and target folders
 		$this->check($config);
 
-		$output->writeln("scanning {$config['source']}");
+		$output->writeln("scanning {$config['source']} for images");
 		$images = $this->scanFolderForImages($config['source']);
-		$imagesCount = count($images);
-		$output->writeln("found {$imagesCount} photos.");
+
+		// set up progress vars
+		$total = count($images);
+		$this->progressOut = new \Hoborg\SGallery\Output\Progress($output, $total);
+		$output->writeln("found {$total} photos.");
 
 		$i = 0;
 		foreach ($images as $image) {
 			$success = $this->generateThumbnail($image);
-
-			if ($success) {
-				$output->write('<fg=green>.</fg=green>');
-			} else {
-				$output->write('<fg=red>.</fg=red>');
-			}
-			if (0 == ++$i % 60) {
-				$done = str_pad(round(100 * $i/$imagesCount).'%', 4, ' ');
-				$output->writeln(str_pad("{$i}|{$done}", 12, ' ', STR_PAD_LEFT));
-			}
+			$this->progressOut->printProgress($success);
 		}
 		$output->writeln("\ndone.");
 	}

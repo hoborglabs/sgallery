@@ -21,6 +21,7 @@ class UpdateCommand extends Command {
 		$output->writeln('<info>Refreshing Gallery...</info>');
 
 		$this->getApplication()->get('refresh:thumbnails')->run($input, $output);
+		$this->getApplication()->get('refresh:covers')->run($input, $output);
 		$this->getApplication()->get('refresh:json')->run($input, $output);
 		$this->getApplication()->get('refresh:html')->run($input, $output);
 		$this->getApplication()->get('install:assets')->run($input, $output);

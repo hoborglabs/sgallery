@@ -62,6 +62,7 @@ class Application extends ConsoleApplication {
 
 		$commands[] = new Command\UpdateCommand();
 		$commands[] = new Command\RefreshThumbnailsCommand();
+		$commands[] = new Command\RefreshCoversCommand();
 		$commands[] = new Command\RefreshHtmlCommand();
 		$commands[] = new Command\RefreshJsonCommand();
 
