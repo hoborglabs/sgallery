@@ -11,10 +11,12 @@ class RefreshThumbnailsCommand extends Command {
 
 	protected function configure() {
 		$this->setName('refresh:thumbnails')
-			->setDescription('Refresh gallery files');
+			->setDescription('Refresh gallery thumbnails files');
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$output->writeln("\n<info>Refresh Thumbnails Files.</info>");
 		$config = $this->getApplication()->getConfiguration();
 
 		// check source and target folders

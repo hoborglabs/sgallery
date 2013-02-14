@@ -19,12 +19,13 @@ class RefreshHtmlCommand extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$output->writeln("\n<info>Refresh HTML Files.</info>");
 		$config = $this->getApplication()->getConfiguration();
 
 		// check source and target folders
 		$this->check($config);
 
-		$output->writeln("<info>Refresh HTML Files.</info>");
 		$output->writeln("scanning {$config['source']}");
 		$folders = $this->scanSourceForFolders($config['source']);
 		$this->processFolders($folders);

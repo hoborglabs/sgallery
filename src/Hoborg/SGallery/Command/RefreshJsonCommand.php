@@ -21,14 +21,14 @@ class RefreshJsonCommand extends Command {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
+
+		$output->writeln("\n<info>Refresh JSON Files.</info>");
 		$config = $this->getApplication()->getConfiguration();
-		$this->progressOut = new \Hoborg\SGallery\Output\Progress($output, $this->countFolders($config['source']));
 
 		// check source and target folders
 		$this->check($config);
-		$this->output = $output;
 
-		$output->writeln("<info>Refresh JSON Files.</info>");
+		$this->progressOut = new \Hoborg\SGallery\Output\Progress($output, $this->countFolders($config['source']));
 		$this->scanFolderForImages($config['source']);
 		$output->writeln("\ndone.");
 	}
