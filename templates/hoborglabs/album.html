@@ -12,7 +12,7 @@
 		</li>
 		{{/slugs}}
 	</ul>
-	
+
 	{{#has_albums}}
 	<h3>{{ i18n.albums }}</h3>
 	<div>
@@ -26,16 +26,15 @@
 		</ul>
 	</div>
 	{{/has_albums}}
-	
+
+	{{#has_photos}}
 	<h3>{{ i18n.photos }}</h3>
 	<div>
 		<ul class="thumbnails" id="photos">
-			{{#photos}}
-				<li><a href="{{ href }}" class="photo"><img src="{{ src }}" class="img-polaroid" /></a><p>{{ caption }}</p></li>
-			{{/photos}}
 		</ul>
 		<div class="well" style="display:none;">
 			<span>Loading...</span>
 		</div>
 	</div>
+	{{/has_photos}}
 </div>

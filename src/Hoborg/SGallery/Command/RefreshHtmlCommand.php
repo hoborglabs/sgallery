@@ -137,8 +137,13 @@ class RefreshHtmlCommand extends Command {
 			'name' => $folder['name'],
 			'albums' => $folder['folders'],
 			'has_albums' => !empty($folder['folders']),
+			'has_photos' => false,
 			'slugs' => $slugs,
 		);
+
+		// check if we have any photos in album
+		$jsonFileName = '/static/json/' . md5($folder['path']) . '-000000.json';
+		$album['has_photos'] = is_readable($config['target'] . $jsonFileName);
 
 		return $album;
 	}
