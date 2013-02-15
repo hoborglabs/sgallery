@@ -30,12 +30,24 @@ class RefreshThumbnailsCommand extends Command {
 		$this->progressOut = new \Hoborg\SGallery\Output\Progress($output, $total);
 		$output->writeln("found {$total} photos.");
 
+		$this->initImageProcessor($config);
+
 		$i = 0;
 		foreach ($images as $image) {
 			$success = $this->generateThumbnail($image);
 			$this->progressOut->printProgress($success);
 		}
 		$output->writeln("\ndone.");
+	}
+
+	protected function initImageProcessor(array $config) {
+		if (\Hoborg\SGallery\Image\GD::isEnabled()) {
+			$this->image = new \Hoborg\SGallery\Image\GD(array(
+				'force' => true,
+			));
+		} else {
+			throw new \Exception('Missing GD module');
+		}
 	}
 
 	protected function scanFolderForImages($folder) {
@@ -65,40 +77,13 @@ class RefreshThumbnailsCommand extends Command {
 	protected function generateThumbnail($image) {
 		$ext = strtolower(preg_replace('/.*\.([^.]+)$/', '$1', $image));
 		$config = $this->getApplication()->getConfiguration();
-		$cacheThumb = $config['target'] . '/static/thumbnails/' . md5($image) . ".{$ext}";
+		$cacheThumb = $config['target'] . '/static/thumbnails/' . md5($image) . '.jpg';
 
 		$imageQuality = isset($config['thumbnails.quality']) ? $config['thumbnails.quality'] : 75;
 		$imageThumbSize = empty($config['thumbnails.size']) ? $config['thumbnails.size'] : 230;
 		$imageMaxDim = empty($config['thumbnails.sourceMaxSize']) ? $config['thumbnails.sourceMaxSize'] : 4000;
 
-		// check if cache file exists
-		if (!is_readable($cacheThumb)) {
-			// Get new sizes
-			list($width, $height) = getimagesize($image);
-
-			if (max($width, $height) > $imageMaxDim) {
-				return false;
-			}
-
-			$l = min($width, $height);
-			$x = ($l == $width) ? 0 : round(($width - $l) / 2);
-			$y = ($l == $height) ? 0 : round(($height - $l) / 2);
-
-			if ('jpg' == $ext) {
-				// Load
-				$thumb = imagecreatetruecolor($imageThumbSize, $imageThumbSize);
-				$source = imagecreatefromjpeg($image);
-
-				// Resize
-				imagecopyresampled($thumb, $source, 0, 0, $x, $y, $imageThumbSize, $imageThumbSize, $l, $l);
-
-				// Output
-				imagejpeg($thumb, $cacheThumb, $imageQuality);
-				return true;
-			}
-		}
-
-		return true;
+		return $this->image->makeThumbnail($image, $cacheThumb, $imageThumbSize);
 	}
 
 	protected function check(array $config) {
