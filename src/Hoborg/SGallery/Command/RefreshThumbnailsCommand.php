@@ -48,7 +48,7 @@ class RefreshThumbnailsCommand extends Command {
 	protected function initImageProcessor(array $config) {
 		if (\Hoborg\SGallery\Image\GD::isEnabled()) {
 			$this->image = new \Hoborg\SGallery\Image\GD(array(
-				'force' => true,
+				'force' => false,
 			));
 		} else {
 			throw new \Exception('Missing GD module');
