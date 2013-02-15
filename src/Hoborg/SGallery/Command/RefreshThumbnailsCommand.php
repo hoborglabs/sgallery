@@ -9,6 +9,11 @@ use Symfony\Component\Console\Command\Command,
 
 class RefreshThumbnailsCommand extends Command {
 
+	/**
+	 * @var Hoborg\SGallery\Image\Image
+	 */
+	protected $image = null;
+
 	protected function configure() {
 		$this->setName('refresh:thumbnails')
 			->setDescription('Refresh gallery thumbnails files');

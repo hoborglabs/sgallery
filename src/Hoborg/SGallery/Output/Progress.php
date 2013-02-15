@@ -21,7 +21,7 @@ class Progress {
 		if ($success) {
 			$this->output->write('<fg=green>.</fg=green>');
 		} else {
-			$this->output->write('<fg=red>.</fg=red>');
+			$this->output->write('<fg=red>E</fg=red>');
 		}
 
 		if ($this->progress['index'] == $this->progress['total']) {
