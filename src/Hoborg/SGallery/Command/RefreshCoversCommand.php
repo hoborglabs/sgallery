@@ -108,10 +108,10 @@ class RefreshCoversCommand extends Command {
 		$coverImagesCount = 4;
 		$limit2tile = isset($config['covers.limit.2tile']) ? $config['covers.limit.2tile'] : 16;
 		$limit1tile = isset($config['covers.limit.1tile']) ? $config['covers.limit.1tile'] : 8;
-		if (count($images) < $limit2tile) {
-			$coverImagesCount = 2;
-		} else if (count($images) < $limit1tile) {
+		if (count($images) < $limit1tile) {
 			$coverImagesCount = 1;
+		} else if (count($images) < $limit2tile) {
+			$coverImagesCount = 2;
 		}
 		for ($i = 0; $i < $coverImagesCount; $i++) {
 			$rand = rand(0, count($images) - 1);
