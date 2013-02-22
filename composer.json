@@ -1,16 +1,16 @@
 {
     "name": "hoborglabs/sgallery",
     "description": "Static Gallery",
-    "require": {
-        "symfony/console": "v2.1.6",
-        "mustache/mustache": "v2.0.2"
-    },
     "authors": [
         {
             "name": "Wojtek Oledzki",
             "email": "wojciech.oledzki@bskyb.com"
         }
     ],
+    "require": {
+        "symfony/console": "v2.1.6",
+        "mustache/mustache": "v2.0.2"
+    },
     "config": {
         "vendor-dir": "vendors"
     }

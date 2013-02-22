@@ -58,7 +58,6 @@ class Application extends ConsoleApplication {
 
 		$commands[] = new Command\InstallCommand();
 		$commands[] = new Command\InstallAssetsCommand();
-		$commands[] = new Command\InstallVendorsCommand();
 
 		$commands[] = new Command\UpdateCommand();
 		$commands[] = new Command\RefreshThumbnailsCommand();

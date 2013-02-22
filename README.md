@@ -9,26 +9,17 @@ or ... you get the idea.
 
 ## Main Principles
 
-Whole gallery is generated up-front using your folder with photos. And by whole gallery I mean
-HTML, JSON for frontend ajax calls, CSS, JS, and image thumbnails.
+Whole gallery is generated up-front using your folder with photos. And by whole gallery I mean HTML, JSON for frontend
+ajax calls, CSS, JS, and image thumbnails.  
+You can use it to generate your gallery on your PC and upload it to your web server.
 
-You need PHP to run it from command line.
+You need PHP 5.3 (or higher) to run it from command line.
 
-After uploading (scp, ftp) images to your web server just run
+After installing and configuring all you need to do is run single command
 ~~~~~
-php sg.php refresh
+php sg.php update
 ~~~~~
 and that's it!
-
-If for any reason you want to regenerate thumbnails or CSS only, simply run
-~~~~~
-php sg.php refresh:css
-~~~~~
-
-For more options check
-~~~~~
-php sg.php help
-~~~~~
 
 
 
@@ -36,21 +27,32 @@ php sg.php help
 
 ## Installation
 
+First clone repo
 ~~~~~
 git clone git://github.com/hoborglabs/sgallery.git
+cd sgallery
+~~~~~
+
+install vendors by downloading from get.hoborglabs.com
+~~~~~
+curl http://get.hoborglabs.com/sgallery/vendors.tar -O
+tar -xf vendors.tar
+~~~~~
+
+or use composer
+~~~~~
 curl -s https://getcomposer.org/installer | php
-php composer.phar install
+php composer.phar update
 ~~~~~
 
-Configure gallery
+And now install sgallery
 ~~~~~
-cp conf/properties.default.ini conf/properties.ini
+php src/sgallery.php install
+~~~~~
+
+You can always change sgallery properties
+~~~~~
 vim conf/properties.ini
-~~~~~
-
-Generate gallery content
-~~~~~
-php src/sg.php update
 ~~~~~
 
 
@@ -59,14 +61,16 @@ php src/sg.php update
 
 ## Development 
 
-Building JS
+If you want to update JS, you will have to run following command after putting your changes. 
 ~~~~~
-node scripts/r.js -o scripts/hoborglabs/app.build.js
+ant build.js
+php src.sgallery install:assets
 ~~~~~
 
-Building CSS
+If you want to update CSS, you need to run the following command after changing CSS files
 ~~~~~
-recess --compress styles/hoborglabs/less/main.less > dist/static/styles/hoborglabs/css/main.css
+ant build.css
+php src/sgallery.php install:assets
 ~~~~~
 
 

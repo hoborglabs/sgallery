@@ -10,8 +10,8 @@ use Symfony\Component\Console\Command\Command,
 class InstallAssetsCommand extends Command {
 
 	protected $assetsFolders = array(
-		'static/scripts/hoborglabs',
-		'static/styles/hoborglabs/css',
+		'/static/scripts/hoborglabs',
+		'/static/styles/hoborglabs/css',
 	);
 
 	protected function configure() {
@@ -26,10 +26,11 @@ class InstallAssetsCommand extends Command {
 		$config = $this->getApplication()->getConfiguration();
 		// check source and target folders
 		$this->check($config);
+		$progressOut = new \Hoborg\SGallery\Output\Progress($output);
 
-		$this->copyJs($config);
-		$this->copyCss($config);
-		$this->copyPhp($config);
+		$progressOut->printStatus('JS', $this->copyJs($config));
+		$progressOut->printStatus('CSS', $this->copyCss($config));
+		$progressOut->printStatus('PHP', $this->copyPhp($config));
 
 		$output->writeln("<info>  done.</info>");
 	}
@@ -37,13 +38,13 @@ class InstallAssetsCommand extends Command {
 	protected function copyJs(array $config) {
 		$sourceDir = $this->getApplication()->getAppRoot() . '/dist/static/scripts/hoborglabs';
 		$targetDir = $config['target'] . '/static/scripts/hoborglabs';
-		copy($sourceDir . '/app.js', $targetDir . '/app.js');
+		return copy($sourceDir . '/app.js', $targetDir . '/app.js');
 	}
 
 	protected function copyCss(array $config) {
 		$sourceDir = $this->getApplication()->getAppRoot() . '/dist/static/styles/hoborglabs/css';
 		$targetDir = $config['target'] . '/static/styles/hoborglabs/css';
-		copy($sourceDir . '/main.css', $targetDir . '/main.css');
+		return copy($sourceDir . '/main.css', $targetDir . '/main.css');
 	}
 
 	protected function copyPhp(array $config) {
@@ -54,6 +55,8 @@ class InstallAssetsCommand extends Command {
 		file_put_contents($targetDir . '/img-proxy.php',
 				'function getConfig() { return array(\'source\' => \'' . addslashes($config['source']) . '\'); }'
 				, FILE_APPEND);
+
+		return true;
 	}
 
 	protected function check(array $config) {

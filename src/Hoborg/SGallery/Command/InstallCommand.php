@@ -22,7 +22,6 @@ class InstallCommand extends Command {
 		$this->check($config);
 
 		$this->getApplication()->get('install:assets')->run($input, $output);
-		$this->getApplication()->get('install:vendors')->run($input, $output);
 	}
 
 	protected function check(array $config) {
