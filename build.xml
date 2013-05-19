@@ -37,6 +37,13 @@
 		 -->
 	</target>
 
+	<target name="build.css.watch"
+		description="Prints command to run for watching CSS changes."
+	>
+		<echo>To watch CSS run following command</echo>
+		<echo>${cmd.recess} ${dir.src}/styles/hoborglabs/less/main.less:${dir.dist}/static/styles/hoborglabs/css/main.css --watch ${dir.src}/styles/hoborglabs/less/</echo>
+	</target>
+
 	<target name="build.js"
 		description="Builds JS file(s)."
 	>

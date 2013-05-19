@@ -1,4 +1,4 @@
-<div id="album" class="span24">
+<div id="album" class="">
 
 	<h2>{{ i18n.album }} - {{ name }}</h2>
 	<p class="lead">{{ meta }}</p>
@@ -16,21 +16,23 @@
 	{{#has_albums}}
 	<h3>{{ i18n.albums }}</h3>
 	<div>
-		<ul class="thumbnails">
+		<ul class="grid"><!-- 
 		{{#albums}}
-			<li class="span6 album">
-				<a href="/albums/{{ slug }}"><img src="{{ cover }}" /></a>
-				<h4 title="{{ name }}">{{ name }}</h4>
-			</li>
+			--><li class="grid-item grid-media">
+				<div class="album">
+					<a href="/albums/{{ slug }}"><img src="{{ cover }}" /></a>
+					<h4>{{ name }}</h4>
+				</div>
+			</li><!--
 		{{/albums}}
-		</ul>
+		--></ul>
 	</div>
 	{{/has_albums}}
 
 	{{#has_photos}}
 	<h3>{{ i18n.photos }}</h3>
 	<div>
-		<ul class="thumbnails" id="photos">
+		<ul class="grid" id="photos">
 		</ul>
 		<div class="well" style="display:none;">
 			<span>Loading...</span>

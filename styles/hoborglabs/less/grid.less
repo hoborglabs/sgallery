@@ -1,0 +1,118 @@
+/**
+ * Responsive Grid for SGallery
+ *
+ * Wojtk oledzki 
+ */
+
+/**
+ * Variables
+ */
+/* width of main container */
+@bodyWidth:  900px;
+/* Set the spacing between your grid items. */
+@gutter:  20px;
+
+/* screen sizes */
+@screenDesk: 1250px; /* five columns*/
+@screenLap: 800px; /* four columns */
+@screenPalm: 568px; /* three columns */
+@screenPalmSmall: 320px; /* two columns */
+
+.container {
+	width: 1200px;
+}
+
+.grid {
+	list-style: none; /* [1] */
+	margin: 0; /* [2] */
+	padding: 0; /* [2] */
+	margin-left: -@gutter; /* [3] */
+}
+
+.grid-item {
+	display: inline-block; /* Cause columns to stack side-by-side. */
+	padding: 0px 0px @gutter @gutter; /* Space columns apart. */
+	vertical-align: top; /* Align columns to the tops of each other. */
+	width: 100%; /* Full-width unless told to behave otherwise. */
+
+	/* Required to combine fluid widths and fixed gutters. */
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+
+.grid-media {
+	width: 20%;
+	
+	img {
+		width: 100%;
+	}
+}
+
+.album {
+	padding: 4px;
+	background-color: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	   -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	-webkit-transition: 0.2s;
+	   -moz-transition: 0.2s;
+	        transition: 0.2s;
+
+	h4 {
+		margin: 2px 0 5px 0;
+		padding: 0px;
+		min-height: 20px;
+	}
+}
+
+.album:hover {
+	box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.6);
+	border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.photo {
+	padding: 4px;
+	background-color: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	   -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	-webkit-transition: 0.2s;
+	   -moz-transition: 0.2s;
+	        transition: 0.2s;
+}
+
+.photo:hover {
+	box-shadow: 0px 0px 16px rgba(0, 0, 0, 0.6);
+	border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: @screenDesk) {
+	.grid-media {
+		width: 25%;
+	}
+
+	.container {
+		width: 95%;
+	}
+}
+
+@media (max-width: @screenLap) {
+	.grid-media {
+		width: 33.33%;
+	}
+}
+
+@media (max-width: @screenPalm) {
+	.grid-media {
+		width: 50%;
+	}
+}
+
+@media (max-width: @screenPalmSmall) {
+	.grid-media {
+		width: 100%;
+	}
+}
