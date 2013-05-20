@@ -17,9 +17,13 @@ define([
 		this.buffer.style.display = 'none';
 
 		// preview image
-		this.previewImg = window.document.getElementById('img-preview'); 
+		this.previewEl = window.document.getElementById('img-preview');
+		this.previewImg = this.previewEl.getElementsByTagName('img').item(0);
 		this.previewImgBaseUrl = '/img-proxy.php';
-		
+		this.previewMsg = this.previewEl.getElementsByClassName('photo-message').item(0);
+		var album = this;
+		this.previewImg.onload = function() { album.previewMsg.style.display = 'none'; };
+
 		this.config = window.SG.config;
 		this.nextBatch = 0;
 		this.loadingEl = this.el.getElementsByClassName('well').item(0);
@@ -38,8 +42,12 @@ define([
 		});
 	}
 
+	/**
+	 * handles click on thumb link.
+	 * 
+	 * @param Event e
+	 */
 	Album.prototype.handleClick = function(e) {
-
 		var fullImg = e.target.getAttribute('data-full-size');
 		if (fullImg) {
 			e.stop();
@@ -48,7 +56,7 @@ define([
 
 			// reset styles
 			this.currentImg.className = 'photo';
-
+			// preview selected img
 			this.previewImage(e.target.parentNode.parentNode);
 
 			return false;
@@ -56,8 +64,12 @@ define([
 
 		return true;
 	};
-	
+
 	Album.prototype.previewImage = function(photoEl) {
+		// show "loading" msg
+		this.previewMsg.style.display = 'block';
+
+		
 		var fullImg = photoEl.getElementsByTagName('img').item(0).getAttribute('data-full-size');
 		if (fullImg) {
 			overlay.show('preview');
@@ -67,11 +79,11 @@ define([
 		photoEl.className = 'photo photo-selected';
 		this.currentImg = photoEl;
 	}
-	
+
 	Album.prototype.showCurrentImage = function() {
 		this.previewImage(this.currentImg);
 	};
-	
+
 	Album.prototype.previousImage = function() {
 		var previous = this.currentImg.parentNode.previousSibling;
 		while (previous && 'LI' != previous.tagName) {
@@ -88,7 +100,7 @@ define([
 			}
 		}
 	};
-	
+
 	Album.prototype.nextImage = function() {
 		var next = this.currentImg.parentNode.nextSibling;
 		while (next && 'LI' != next.tagName) {
