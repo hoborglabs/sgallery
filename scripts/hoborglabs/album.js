@@ -69,11 +69,27 @@ define([
 		// show "loading" msg
 		this.previewMsg.style.display = 'block';
 
-		
 		var fullImg = photoEl.getElementsByTagName('img').item(0).getAttribute('data-full-size');
 		if (fullImg) {
+			// slide out current image
+			var album = this;
+			var oldImg = this.previewImg;
+			oldImg.className += ' slide';
+			setTimeout(function() {
+				oldImg.parentNode.removeChild(oldImg);
+			}, 500);
+
+			// create new img tag
+			var img = this.document.createElement('img');
+			this.previewEl.appendChild(img);
+			img.className = 'photo-preview';
+			img.onload = function() { album.previewMsg.style.display = 'none'; };
+			img.src = this.previewImgBaseUrl + fullImg;
+
 			overlay.show('preview');
-			this.previewImg.src = this.previewImgBaseUrl + fullImg;
+			
+			this.previewImg = img;
+			//this.previewImg.src = this.previewImgBaseUrl + fullImg;
 		}
 
 		photoEl.className = 'photo photo-selected';
