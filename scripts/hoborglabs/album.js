@@ -10,8 +10,12 @@ define([
 
 	function Album(window) {
 		this.document = window.document;
-		this.el = this.document.getElementById('album')
+		this.el = this.document.getElementById('album');
 		
+		// buffer div
+		this.buffer = this.document.createElement('div');
+		this.buffer.style.display = 'none';
+
 		// preview image
 		this.previewImg = window.document.getElementById('img-preview'); 
 		this.previewImgBaseUrl = '/img-proxy.php';
@@ -91,6 +95,15 @@ define([
 			next = next.nextSibling;
 		}
 
+		if (!next) {
+			// try to load next batch
+			var album = this;
+			this.loadImages(function() {
+				album.nextImage();
+			});
+			return;
+		}
+
 		if (next) {
 			this.currentImg.className = 'photo';
 			this.currentImg = next.getElementsByClassName('photo').item(0);
@@ -106,19 +119,28 @@ define([
 
 		if (this.nextBatch >= this.config.photos.length) {
 			infiniteScroll.stop();
-			return;
+			return false;
 		}
 
 		var photos = document.getElementById('photos');
 
 		// show "loading" bar
 		var loadingEl = this.loadingEl;
+		var album = this;
 		loadingEl.style.display = 'block';
 
 		ajax(this.config.photos[this.nextBatch++], function(data) {
 			var batch = JSON.parse(data);
-			photos.innerHTML = photos.innerHTML + batch.html;
+			
+			// save HTML to buffer and move to photos EL
+			var node = null;
+			album.buffer.innerHTML = batch.html;
+			while (node = album.buffer.firstChild) {
+				photos.appendChild(node);
+			}
+			//photos.innerHTML = photos.innerHTML + batch.html;
 			loadingEl.style.display = 'none';
+			album.buffer.innerHTML = '';
 
 			if (callback) {
 				callback();
