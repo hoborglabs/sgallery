@@ -30,13 +30,16 @@ img.photo-preview {
 	max-height: 100%;
 	max-width: 100%;
 	margin: auto;
-	-webkit-transition: 0.5s;
-	   -moz-transition: 0.5s;
-	        transition: 0.5s;
+	-webkit-transition: 0.3s;
+	   -moz-transition: 0.3s;
+	        transition: 0.3s;
 }
 
-img.photo-preview.slide {
-	margin-left: -5000px;
+img.photo-preview.slide-out {
+	margin-left: -100%;
+}
+img.photo-preview.slide-in {
+	padding-left: 200%;
 }
 
 .modal-backdrop {

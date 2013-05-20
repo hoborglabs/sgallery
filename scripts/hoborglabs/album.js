@@ -74,15 +74,16 @@ define([
 			// slide out current image
 			var album = this;
 			var oldImg = this.previewImg;
-			oldImg.className += ' slide';
+			oldImg.className += ' slide-out';
 			setTimeout(function() {
 				oldImg.parentNode.removeChild(oldImg);
+				album.previewImg.className = 'photo-preview';
 			}, 500);
 
 			// create new img tag
 			var img = this.document.createElement('img');
 			this.previewEl.appendChild(img);
-			img.className = 'photo-preview';
+			img.className = 'photo-preview slide-in';
 			img.onload = function() { album.previewMsg.style.display = 'none'; };
 			img.src = this.previewImgBaseUrl + fullImg;
 
