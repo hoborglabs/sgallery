@@ -10,11 +10,14 @@ define([
 
 	function Album(window) {
 		this.document = window.document;
+		this.el = this.document.getElementById('album')
+		
+		// preview image
 		this.previewImg = window.document.getElementById('img-preview'); 
 		this.previewImgBaseUrl = '/img-proxy.php';
+		
 		this.config = window.SG.config;
 		this.nextBatch = 0;
-		this.el = this.document.getElementById('album')
 		this.loadingEl = this.el.getElementsByClassName('well').item(0);
 
 		var album = this;
@@ -26,6 +29,8 @@ define([
 		infiniteScroll.addHandler(this.loadImages.bind(this));
 		this.loadImages(function() {
 			infiniteScroll.start();
+			album.currentImg = album.el.getElementsByClassName('photo').item(0);
+			album.currentImg.className = 'photo photo-selected';
 		});
 	}
 
@@ -36,14 +41,66 @@ define([
 			e.stop();
 			e.preventDefault();
 			e.stopImmediatePropagation();
-			overlay.show('preview');
-			this.previewImg.src = this.previewImgBaseUrl + fullImg;
+
+			// reset styles
+			this.currentImg.className = 'photo';
+
+			this.previewImage(e.target.parentNode.parentNode);
 
 			return false;
 		}
 
 		return true;
 	};
+	
+	Album.prototype.previewImage = function(photoEl) {
+		var fullImg = photoEl.getElementsByTagName('img').item(0).getAttribute('data-full-size');
+		if (fullImg) {
+			overlay.show('preview');
+			this.previewImg.src = this.previewImgBaseUrl + fullImg;
+		}
+
+		photoEl.className = 'photo photo-selected';
+		this.currentImg = photoEl;
+	}
+	
+	Album.prototype.showCurrentImage = function() {
+		this.previewImage(this.currentImg);
+	};
+	
+	Album.prototype.previousImage = function() {
+		var previous = this.currentImg.parentNode.previousSibling;
+		while (previous && 'LI' != previous.tagName) {
+			previous = previous.previousSibling;
+		}
+
+		if (previous) {
+			this.currentImg.className = 'photo';
+			this.currentImg = previous.getElementsByClassName('photo').item(0);
+			this.currentImg.className = 'photo photo-selected';
+
+			if (overlay.isPanelActive('preview')) {
+				this.previewImage(this.currentImg);
+			}
+		}
+	};
+	
+	Album.prototype.nextImage = function() {
+		var next = this.currentImg.parentNode.nextSibling;
+		while (next && 'LI' != next.tagName) {
+			next = next.nextSibling;
+		}
+
+		if (next) {
+			this.currentImg.className = 'photo';
+			this.currentImg = next.getElementsByClassName('photo').item(0);
+			this.currentImg.className = 'photo photo-selected';
+
+			if (overlay.isPanelActive('preview')) {
+				this.previewImage(this.currentImg);
+			}
+		}
+	}
 
 	Album.prototype.loadImages = function(callback) {
 

@@ -6,6 +6,7 @@ require([
 	'hoborglabs/overlay'
 ], function(ready, mousetrap, Album, Overlay) {
 
+	// .bind
 	if (!Function.prototype.bind) {
 		Function.prototype.bind = function (oThis) {
 			if (typeof this !== "function") {
@@ -31,8 +32,13 @@ require([
 
 	ready(function() {
 		var album = new Album.Album(window);
-		mousetrap.bind('?', function() {Overlay.show('help'); });
-		mousetrap.bind('esc', function() {Overlay.deactivate(); });
+		mousetrap.bind('?', function() { Overlay.show('help'); });
+		mousetrap.bind('esc', function() { Overlay.deactivate(); });
+		
+		// add key bindings to album
+		mousetrap.bind('left', function() { album.previousImage(); });
+		mousetrap.bind('right', function() { album.nextImage(); });
+		mousetrap.bind('enter', function() { album.showCurrentImage(); });
 	});
 
 });
