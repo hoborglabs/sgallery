@@ -76,6 +76,7 @@ define([
 			var oldImg = this.previewImg;
 			oldImg.className += ' slide-out';
 			setTimeout(function() {
+				oldImg.onload = null;
 				oldImg.parentNode.removeChild(oldImg);
 				album.previewImg.className = 'photo-preview';
 			}, 500);
