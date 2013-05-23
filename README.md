@@ -17,7 +17,7 @@ You need PHP 5.3 (or higher) to run it from command line.
 
 After installing and configuring all you need to do is run single command
 ~~~~~
-php sg.php update
+php src/sg.php update
 ~~~~~
 and that's it!
 
@@ -47,7 +47,7 @@ php composer.phar update
 
 And now install sgallery
 ~~~~~
-php src/sgallery.php install
+php src/sg.php install
 ~~~~~
 
 You can always change sgallery properties
@@ -64,13 +64,13 @@ vim conf/properties.ini
 If you want to update JS, you will have to run following command after putting your changes. 
 ~~~~~
 ant build.js
-php src.sgallery install:assets
+php src/sg.php install:assets
 ~~~~~
 
 If you want to update CSS, you need to run the following command after changing CSS files
 ~~~~~
 ant build.css
-php src/sgallery.php install:assets
+php src/sg.php install:assets
 ~~~~~
 
 
