@@ -13,7 +13,7 @@
     },
     "config": {
         "vendor-dir": "vendors"
-    }
+    },
     "autoload": {
 		"psr-0": {
 			"Hoborg": "src/"
