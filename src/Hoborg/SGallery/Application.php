@@ -11,6 +11,7 @@ class Application extends ConsoleApplication {
 	protected $appRoot = null;
 	protected $configRoot = null;
 	protected $targetRoot = null;
+	protected $configurationOverride = null;
 
 	protected $configuration = null;
 
@@ -25,12 +26,22 @@ class Application extends ConsoleApplication {
 		$this->configRoot = $this->appRoot . '/conf';
 	}
 
+	public function setConfigurationOverride($configurationFile) {
+		$this->configurationOverride = $configurationFile;
+		// invalidate current configuraiton
+		$this->configuration = null;
+	}
+
 	public function getConfiguration() {
 		if (is_array($this->configuration)) {
 			return $this->configuration;
 		}
 
-		$this->configuration = parse_ini_file($this->configRoot . '/properties.ini', false);
+		$this->configuration = array();
+		if (!empty($this->configurationOverride)) {
+			$this->configuration = parse_ini_file($this->configurationOverride, false);
+		}
+		$this->configuration += parse_ini_file($this->configRoot . '/sgallery.properties', false);
 
 		// i18n
 		$i18nKey = empty($this->configuration['language']) ? 'en' : $this->configuration['language'];
