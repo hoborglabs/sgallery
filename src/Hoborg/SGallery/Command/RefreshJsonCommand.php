@@ -59,7 +59,8 @@ class RefreshJsonCommand extends Command {
 
 	protected function generateJson($folderPath, array $images) {
 		$config = $this->getApplication()->getConfiguration();
-		$batchTemplate = $this->getApplication()->getAppRoot() . '/templates/' . $config['skin'] . '/batch.html';
+		$tempalteRoot = $this->getApplication()->findPath('/templates/' . $config['skin']);
+		$batchTemplate = $tempalteRoot . '/batch.html';
 		$batchSize = 12;
 		$i = 0;
 		$batch = array();

@@ -98,7 +98,7 @@ class RefreshHtmlCommand extends Command {
 			mkdir($albumRoot, 0755, 1);
 		}
 
-		$tempalteRoot = $this->getApplication()->getAppRoot() . '/templates/' . $config['skin'];
+		$tempalteRoot = $this->getApplication()->findPath('/templates/' . $config['skin']);
 		$albumHtml = $this->mustacheRender("{$tempalteRoot}/album.html", $this->getAlbumData($folder));
 		$pageHtml = $this->mustacheRender("{$tempalteRoot}/page.html", $this->getPageData($folder, $albumHtml));
 

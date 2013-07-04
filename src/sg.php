@@ -7,4 +7,5 @@ use Hoborg\SGallery\Application;
 
 $console = new Application();
 $console->setApplicationRoot(__DIR__ . '/../');
+$console->setConfigurationOverride('sgallery.properties');
 $console->run();

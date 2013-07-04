@@ -15,6 +15,8 @@ class Application extends ConsoleApplication {
 
 	protected $configuration = null;
 
+	protected $extensions = array();
+
 	public function setApplicationRoot($appRoot) {
 		$this->appRoot = realpath($appRoot);
 		if (empty($this->appRoot)) {
@@ -30,6 +32,13 @@ class Application extends ConsoleApplication {
 		$this->configurationOverride = $configurationFile;
 		// invalidate current configuraiton
 		$this->configuration = null;
+	}
+
+	public function addExtensionPath($extensionFolder) {
+		if (!is_readable($extensionFolder) || !is_dir($extensionFolder)) {
+			throw new \Exception("Extension folder `{$extensionFolder}` not readable");
+		}
+		$this->extensions[] = $extensionFolder;
 	}
 
 	public function getConfiguration() {
@@ -53,6 +62,19 @@ class Application extends ConsoleApplication {
 
 	public function getAppRoot() {
 		return $this->appRoot;
+	}
+
+	public function findPath($relativePath) {
+		foreach ($this->extensions as $extensionRoot) {
+			if (is_readable("{$extensionRoot}/{$relativePath}")) {
+				return realpath("{$extensionRoot}/{$relativePath}");
+			}
+		}
+		if (is_readable("{$this->appRoot}/{$relativePath}")) {
+			return realpath("{$this->appRoot}/{$relativePath}");
+		}
+
+		return false;
 	}
 
 	public function renderError($error, OutputInterface $output = null) {
