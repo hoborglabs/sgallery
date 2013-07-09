@@ -84,9 +84,9 @@ class RefreshThumbnailsCommand extends Command {
 		$config = $this->getApplication()->getConfiguration();
 		$cacheThumb = $config['target'] . '/static/thumbnails/' . md5($image) . '.jpg';
 
-		$imageQuality = isset($config['thumbnails.quality']) ? $config['thumbnails.quality'] : 75;
-		$imageThumbSize = empty($config['thumbnails.size']) ? $config['thumbnails.size'] : 230;
-		$imageMaxDim = empty($config['thumbnails.sourceMaxSize']) ? $config['thumbnails.sourceMaxSize'] : 4000;
+		$imageQuality = !isset($config['thumbnails.quality']) ? 75 : $config['thumbnails.quality'];
+		$imageThumbSize = empty($config['thumbnails.size']) ? 230 : $config['thumbnails.size'];
+		$imageMaxDim = empty($config['thumbnails.sourceMaxSize']) ? 4000 : $config['thumbnails.sourceMaxSize'];
 
 		return $this->image->makeThumbnail($image, $cacheThumb, $imageThumbSize);
 	}
