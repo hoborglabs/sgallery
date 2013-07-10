@@ -43,12 +43,22 @@ class RefreshHtmlCommand extends Command {
 			'folders' => array(),
 		);
 
-		// get relative path for html
+		// get relative path for html (ralative to source)
 		$slug = str_replace($config['source'], '', $folder['path']);
 		$slug = strtolower(str_replace(' ', '-', $slug));
 		$slug = preg_replace('/-+/', '-', $slug);
 		$slug = preg_replace('/[^a-zA-Z0-9\/\-_]/', '', $slug);
 		$folder['slug'] = $slug;
+
+		// get meta
+		// not sure about the name 'sgallery.properties'
+		if (is_file("{$folderPath}/sgallery.properties")) {
+			$albumInfo = parse_ini_file("{$folderPath}/sgallery.properties");
+			if (!empty($albumInfo['name'])) {
+				$folder['name'] = $albumInfo['name'];
+			}
+			$folder['meta'] = $albumInfo['meta'];
+		}
 
 		foreach ($dir as $entry) {
 			// skip . .. and any file/folder that starts with "."
@@ -60,8 +70,6 @@ class RefreshHtmlCommand extends Command {
 				$folder['folders'][] = $this->scanSourceForFolders("{$folderPath}/{$entry}");
 				continue;
 			}
-
-			// get meta
 		}
 
 		$folder = $this->findCovers($folder);
@@ -136,6 +144,7 @@ class RefreshHtmlCommand extends Command {
 		$album = array(
 			'i18n' => $config['i18n'],
 			'name' => $folder['name'],
+			'meta' => $folder['meta'],
 			'albums' => $folder['folders'],
 			'has_albums' => !empty($folder['folders']),
 			'has_photos' => false,

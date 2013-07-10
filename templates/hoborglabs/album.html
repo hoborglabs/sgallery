@@ -13,7 +13,7 @@
 	<div id="album" class="">
 
 		<h2>{{ i18n.album }} - {{ name }}</h2>
-		<p class="lead">{{ meta }}</p>
+		{{#meta}}<p class="lead">{{ meta }}</p>{{/meta}}
 
 		{{#has_albums}}
 		<h3>{{ i18n.albums }}</h3>
