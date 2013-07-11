@@ -28,7 +28,13 @@ class RefreshHtmlCommand extends Command {
 
 		$output->writeln("scanning {$config['source']}");
 		$folders = $this->scanSourceForFolders($config['source']);
-		$this->processFolders($folders);
+
+		$slugs = array();
+		$slugs[] = array(
+			'text' => $config['i18n']['nav.home'],
+			'href' => '/'
+		);
+		$this->processFolders($folders, $slugs);
 	}
 
 	protected function scanSourceForFolders($folderPath) {
@@ -91,14 +97,19 @@ class RefreshHtmlCommand extends Command {
 		return $folder;
 	}
 
-	protected function processFolders(array $folder) {
-		$this->generateAlbum($folder);
+	protected function processFolders(array $folder, array $slugs = array()) {
+		$this->generateAlbum($folder, $slugs);
 		foreach ($folder['folders'] as $subFolder) {
-			$this->processFolders($subFolder);
+			$slugs[] = array(
+				'text' => $subFolder['name'],
+				'href' => $subFolder['slug'],
+			);
+			$this->processFolders($subFolder, $slugs);
+			array_pop($slugs);
 		}
 	}
 
-	protected function generateAlbum(array $folder) {
+	protected function generateAlbum(array $folder, array $slugs) {
 		$config = $this->getApplication()->getConfiguration();
 		$albumRoot = $config['target'] . '/albums/' . $folder['slug'];
 
@@ -107,39 +118,20 @@ class RefreshHtmlCommand extends Command {
 		}
 
 		$tempalteRoot = $this->getApplication()->findPath('/templates/' . $config['skin']);
-		$albumHtml = $this->mustacheRender("{$tempalteRoot}/album.html", $this->getAlbumData($folder));
+		$albumHtml = $this->mustacheRender("{$tempalteRoot}/album.html", $this->getAlbumData($folder, $slugs));
 		$pageHtml = $this->mustacheRender("{$tempalteRoot}/page.html", $this->getPageData($folder, $albumHtml));
 
 		file_put_contents("{$albumRoot}/index.html", $pageHtml);
 	}
 
-	protected function getAlbumData(array $folder) {
+	protected function getAlbumData(array $folder, array $slugs) {
 		$album = array();
 		$config = $this->getApplication()->getConfiguration();
 
-		$parts = explode('/', $folder['slug']);
-		$slugs = array();
-		if (!empty($parts)) {
-			$slug = '';
-			$slugs[] = array(
-				'href' => '/',
-				'text' => $config['i18n']['nav.home']
-			);
-			foreach ($parts as $part) {
-				if (empty($part)) {
-					continue;
-				}
-				$slug .= "/{$part}";
-				$slugs[] = array(
-					'href' => $slug,
-					'text' => $part,
-				);
-			}
-
-			$last = array_pop($slugs);
-			unset($last['href']);
-			$slugs[] = $last;
-		}
+		// remove link from last slug
+		$last = array_pop($slugs);
+		unset($last['href']);
+		$slugs[] = $last;
 
 		$album = array(
 			'i18n' => $config['i18n'],
@@ -148,7 +140,7 @@ class RefreshHtmlCommand extends Command {
 			'albums' => $folder['folders'],
 			'has_albums' => !empty($folder['folders']),
 			'has_photos' => false,
-			'slugs' => $slugs,
+			'slugs' => $slugs
 		);
 
 		// check if we have any photos in album
