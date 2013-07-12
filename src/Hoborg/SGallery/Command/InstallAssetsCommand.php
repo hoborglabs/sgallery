@@ -52,8 +52,10 @@ class InstallAssetsCommand extends Command {
 		$targetDir = $config['target'] . '/';
 		copy($sourceDir . '/img-proxy.php', $targetDir . '/img-proxy.php');
 
+		// you can override src path for proxy
+		$source = empty($config['source.proxy']) ? $config['source'] : $config['source.proxy'];
 		file_put_contents($targetDir . '/img-proxy.php',
-				'function getConfig() { return array(\'source\' => \'' . addslashes($config['source']) . '\'); }'
+				'function getConfig() { return array(\'source\' => \'' . addslashes($source) . '\'); }'
 				, FILE_APPEND);
 
 		return true;
