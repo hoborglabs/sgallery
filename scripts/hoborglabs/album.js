@@ -19,7 +19,6 @@ define([
 		// preview image
 		this.previewEl = window.document.getElementById('img-preview');
 		this.previewImg = this.previewEl.getElementsByTagName('img').item(0);
-		this.previewImgBaseUrl = '/img-proxy.php';
 		this.previewMsg = this.previewEl.getElementsByClassName('photo-message').item(0);
 		var album = this;
 		this.previewImg.onload = function() { album.previewMsg.style.display = 'none'; };
@@ -86,12 +85,11 @@ define([
 			this.previewEl.appendChild(img);
 			img.className = 'photo-preview slide-in';
 			img.onload = function() { album.previewMsg.style.display = 'none'; };
-			img.src = this.previewImgBaseUrl + fullImg;
+			img.src = fullImg;
 
 			overlay.show('preview');
-			
+
 			this.previewImg = img;
-			//this.previewImg.src = this.previewImgBaseUrl + fullImg;
 		}
 
 		photoEl.className = 'photo photo-selected';
