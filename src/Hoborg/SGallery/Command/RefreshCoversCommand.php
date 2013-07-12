@@ -62,21 +62,34 @@ class RefreshCoversCommand extends Command {
 	protected function generateCover($folder) {
 
 		$config = $this->getApplication()->getConfiguration();
-
-		// scan folder for images
-		$dir = scandir($folder);
 		$images = array();
-		foreach ($dir as $entry) {
-			// skip . .. and any file/folder that starts with "."
-			if (0 === strpos($entry, '.')) {
-				continue;
-			}
 
-			if (is_file("{$folder}/{$entry}")) {
-				// look for thumbnail
-				$thumbFileName = $config['target'] . '/static/thumbnails/' . md5("{$folder}/{$entry}") . '.jpg';
+		// read album properties.
+		if (is_file("{$folder}/sgallery.properties")) {
+			$albumInfo = parse_ini_file("{$folder}/sgallery.properties");
+			if (!empty($albumInfo['cover'])) {
+				$thumbFileName = $config['target'] . '/static/thumbnails/' . md5("{$folder}/{$albumInfo['cover']}") . '.jpg';
 				if (is_file($thumbFileName)) {
 					$images[] = $thumbFileName;
+				}
+			}
+		}
+
+		if (empty($images)) {
+			// scan folder for images
+			$dir = scandir($folder);
+			foreach ($dir as $entry) {
+				// skip . .. and any file/folder that starts with "."
+				if (0 === strpos($entry, '.')) {
+					continue;
+				}
+
+				if (is_file("{$folder}/{$entry}")) {
+					// look for thumbnail
+					$thumbFileName = $config['target'] . '/static/thumbnails/' . md5("{$folder}/{$entry}") . '.jpg';
+					if (is_file($thumbFileName)) {
+						$images[] = $thumbFileName;
+					}
 				}
 			}
 		}
