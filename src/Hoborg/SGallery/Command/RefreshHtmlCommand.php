@@ -29,7 +29,6 @@ class RefreshHtmlCommand extends Command {
 		$output->writeln("scanning {$config['source']}");
 		$folders = $this->scanSourceForFolders($config['source']);
 
-		var_dump($folders['name']);
 		$slugs = array();
 		$slugs[] = array(
 			'text' => empty($folders['name']) ? $config['i18n']['nav.home'] : $folders['name'],
@@ -59,7 +58,6 @@ class RefreshHtmlCommand extends Command {
 
 		// get meta
 		// not sure about the name 'sgallery.properties'
-		var_dump("{$folderPath}/sgallery.properties");
 		if (is_file("{$folderPath}/sgallery.properties")) {
 			$albumInfo = parse_ini_file("{$folderPath}/sgallery.properties");
 			if (!empty($albumInfo['name'])) {

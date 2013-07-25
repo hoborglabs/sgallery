@@ -11,7 +11,8 @@ define([
 	function Album(window) {
 		this.document = window.document;
 		this.el = this.document.getElementById('album');
-		
+		this.elPreview = this.document.getElementById('js-album_preview');
+
 		// buffer div
 		this.buffer = this.document.createElement('div');
 		this.buffer.style.display = 'none';
@@ -23,6 +24,9 @@ define([
 		var album = this;
 		this.previewImg.onload = function() { album.previewMsg.style.display = 'none'; };
 
+		// set size for the preview pane
+		this.handleResize();
+
 		this.config = window.SG.config;
 		this.nextBatch = 0;
 		this.loadingEl = this.el.getElementsByClassName('well').item(0);
@@ -31,7 +35,11 @@ define([
 		bean.on(this.el, 'click', 'a', function(e) { return album.handleClick(e); });
 
 		// bind click on preview
-		bean.on(this.document.getElementById('overlay'), 'click', function(e) { overlay.deactivate(); });
+		bean.on(this.elPreview.getElementsByClassName('js-prev').item(0), 'click', function(e) { album.previousImage(); });
+		bean.on(this.elPreview.getElementsByClassName('js-next').item(0), 'click', function(e) { album.nextImage(); });
+
+		// bind click of "next" and "prev"
+		bean.on(this.previewEl, 'click', function(e) { overlay.deactivate(); });
 
 		infiniteScroll.addHandler(this.loadImages.bind(this));
 		this.loadImages(function() {
@@ -62,6 +70,19 @@ define([
 		}
 
 		return true;
+	};
+
+	/**
+	 * This function is called everytime a user resizes window
+	 */
+	Album.prototype.handleResize = function() {
+		var height = window.innerHeight,
+			width = window.innerWidth,
+			margin = 20;
+		
+		this.previewEl.style.width = (width - 2*margin) + 'px';
+		this.previewEl.style.height = (height - 2*margin) + 'px';
+		this.previewEl.style.margin = margin + 'px';
 	};
 
 	Album.prototype.previewImage = function(photoEl) {

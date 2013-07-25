@@ -29,6 +29,7 @@ a:hover {
 img.photo-preview {
 	max-height: 100%;
 	max-width: 100%;
+	display: block;
 	margin: auto;
 	-webkit-transition: 0.3s;
 	   -moz-transition: 0.3s;
@@ -40,6 +41,29 @@ img.photo-preview.slide-out {
 }
 img.photo-preview.slide-in {
 	padding-left: 200%;
+}
+
+.preview__prev,
+.preview__next {
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 100px;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.preview__prev:hover,
+.preview__next:hover {
+	background-color: rgba(255,255,255,0.2);
+}
+.preview__prev {
+	left: 0;
+	background-image: url(../gfx/i_prev.png);
+}
+.preview__next {
+	right: 0;
+	background-image: url(../gfx/i_next.png);
 }
 
 .modal-backdrop {

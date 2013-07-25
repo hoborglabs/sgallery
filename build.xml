@@ -28,13 +28,12 @@
 			<arg line="${dir.src}/styles/hoborglabs/less/main.less" />
 		</exec>
 
-		<!-- Copy gfx
-		<copy todir="${dir.static}/styles/gfx">
-			<fileset dir="${dir.base}/styles/less/bootstrap-2.2/img">
-				<include name="**.png" />
+		<!-- Copy gfx -->
+		<copy todir="${dir.dist}/static/styles/hoborglabs/gfx">
+			<fileset dir="${dir.src}/styles/hoborglabs/gfx">
+				<include name="*" />
 			</fileset>
 		</copy>
-		 -->
 	</target>
 
 	<target name="build.css.watch"
