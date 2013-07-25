@@ -47,8 +47,11 @@ class RefreshThumbnailsCommand extends Command {
 
 	protected function initImageProcessor(array $config) {
 		if (\Hoborg\SGallery\Image\GD::isEnabled()) {
+			$config = $this->getApplication()->getConfiguration();
+			$imageMaxDim = empty($config['thumbnails.sourceMaxSize']) ? 4000 : $config['thumbnails.sourceMaxSize'];
 			$this->image = new \Hoborg\SGallery\Image\GD(array(
 				'force' => false,
+				'imageMaxDim' => $imageMaxDim
 			));
 		} else {
 			throw new \Exception('Missing GD module');
@@ -86,7 +89,6 @@ class RefreshThumbnailsCommand extends Command {
 
 		$imageQuality = !isset($config['thumbnails.quality']) ? 75 : $config['thumbnails.quality'];
 		$imageThumbSize = empty($config['thumbnails.size']) ? 230 : $config['thumbnails.size'];
-		$imageMaxDim = empty($config['thumbnails.sourceMaxSize']) ? 4000 : $config['thumbnails.sourceMaxSize'];
 
 		return $this->image->makeThumbnail($image, $cacheThumb, $imageThumbSize);
 	}
