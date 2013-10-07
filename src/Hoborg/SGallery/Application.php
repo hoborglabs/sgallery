@@ -20,10 +20,10 @@ class Application extends ConsoleApplication {
 	public function setApplicationRoot($appRoot) {
 		$this->appRoot = realpath($appRoot);
 		if (empty($this->appRoot)) {
-			$this->renderError("Application Root {$appRoot} is not a folder.");
+			return $this->renderError("Application Root {$appRoot} is not a folder.");
 		}
 		if (!is_readable($this->appRoot . '/conf')) {
-			$this->renderError("Configuration folder is not readable {$this->appRoot}/conf.");
+			return $this->renderError("Configuration folder is not readable {$this->appRoot}/conf.");
 		}
 		$this->configRoot = $this->appRoot . '/conf';
 	}

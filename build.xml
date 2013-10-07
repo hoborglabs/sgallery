@@ -6,6 +6,7 @@
 	<!-- set default values if not already set in build.properties -->
 	<property name="dir.base" location="." />
 	<property name="dir.src" location="." />
+	<property name="dir.test" location="${dir.base}/tests" />
 	<property name="dir.dist" location="./dist" />
 
 	<!-- Commands aliases -->
@@ -140,7 +141,16 @@
 		description="Clears deploy folder"
 		if="deploy.allowClear"
 	>
-		<delete dir="${dir.deploy}">
+		<delete dir="${dir.tests}">
+			<include name="**/*" />
+		</delete>
+	</target>
+
+	<target name="clear.test"
+		description="Clears test fixtures. Usefull after failed test target"
+	>
+		<echo>Delete ${dir.test}/fixtures</echo>
+		<delete dir="${dir.test}/fixtures" includeemptydirs="true">
 			<include name="**/*" />
 		</delete>
 	</target>
