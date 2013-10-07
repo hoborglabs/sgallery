@@ -12,7 +12,35 @@
 	<property name="cmd.recess" value="recess" />
 	<property name="cmd.node" value="node" />
 	<property name="cmd.php" value="php" />
+	<property name="cmd.phpunit" value="phpunit" />
 
+
+
+
+
+	<!--
+	Tests.
+	Always test before build :)
+	 -->
+	<target name="test"
+		description="Run all tests"
+	>
+		<antcall target="test.phpunit" />
+	</target>
+
+	<target name="test.phpunit">
+		<exec executable="${cmd.phpunit}">
+			<arg line="--configuration phpunit.xml" />
+		</exec>
+	</target>
+
+
+
+
+
+	<!-- 
+	Build sGallery.
+	-->
 	<target name="build"
 		depends="prepare, build.css, build.js, build.php"
 	>
@@ -64,10 +92,18 @@
 		</exec>
 	</target>
 
+
+
+
+
+	<!--
+	Deploy
+	-->
 	<target name="deploy.assets" if="dir.deploy"
 		description="Deploys gallery assets to `dir.deploy`"
-		depends="deploy.css, deploy.js"
 	>
+		<antcall target="deploy.css" />
+		<antcall target="deploy.js" />
 	</target>
 
 	<target name="deploy.css" if="dir.deploy">
