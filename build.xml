@@ -152,6 +152,7 @@
 		<echo>Delete ${dir.test}/fixtures</echo>
 		<delete dir="${dir.test}/fixtures" includeemptydirs="true">
 			<include name="**/*" />
+			<exclude name="exampleApp/**" />
 		</delete>
 	</target>
 

@@ -48,6 +48,9 @@ class Application extends ConsoleApplication {
 
 		$this->configuration = array();
 		if (!empty($this->configurationOverride)) {
+			if (!is_readable($this->configurationOverride)) {
+				return $this->renderError("Configuration override file not readable {$this->configurationOverride}");
+			}
 			$this->configuration = parse_ini_file($this->configurationOverride, false);
 		}
 		$this->configuration += parse_ini_file($this->configRoot . '/sgallery.properties', false);

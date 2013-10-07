@@ -40,4 +40,52 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 		
 	}
 
-} 
+	public function testSetConfigurationOverrideWithWrongPathToFile() {
+		$appRoot = TEST_ROOT . '/fixtures/appNoOverride';
+		$fixture = $this->getMock($this->fixtureClass, array('renderError'));
+		$fixture->expects($this->once())
+			->method('renderError')
+			->with($this->stringContains('Configuration override file not readable'));
+
+		mkdir($appRoot);
+		mkdir($appRoot . '/conf');
+		$fixture->setConfigurationOverride('not-existing-file.ini');
+		$config = $fixture->getConfiguration();
+		rmdir($appRoot . '/conf');
+		rmdir($appRoot);
+		
+	}
+
+	public function testSetEmptyConfigurationOverride() {
+		$appRoot = TEST_ROOT . '/fixtures/exampleApp';
+		$fixture = $this->getMock($this->fixtureClass, array('renderError'));
+		$override = TEST_ROOT . '/fixtures/override.ini';
+
+		$fixture->setApplicationRoot($appRoot);
+		file_put_contents($override, '; just a comment line');
+		$fixture->setConfigurationOverride($override);
+		$config = $fixture->getConfiguration();
+
+		$this->assertEquals('not overriden', $config['override.test']);
+	}
+
+	public function testSetConfigurationOverride() {
+		$appRoot = TEST_ROOT . '/fixtures/exampleApp';
+		$fixture = $this->getMock($this->fixtureClass, array('renderError'));
+		$override = TEST_ROOT . '/fixtures/override.ini';
+
+		$fixture->setApplicationRoot($appRoot);
+
+		// check value before overriding 
+		$config = $fixture->getConfiguration();
+		$this->assertEquals('not overriden', $config['override.test']);
+
+		// overrides	
+		file_put_contents($override, 'override.test = overriden');
+		$fixture->setConfigurationOverride($override);
+		$config = $fixture->getConfiguration();
+
+		$this->assertEquals('overriden', $config['override.test']);
+
+	}
+}
