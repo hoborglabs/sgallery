@@ -9,6 +9,7 @@
 !*.default.ini
 !conf/i18n/*.ini
 build.properties
+sgallery.properties
 
 /composer.*
 !/composer.json

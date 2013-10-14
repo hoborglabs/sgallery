@@ -88,4 +88,28 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals('overriden', $config['override.test']);
 
 	}
+
+	public function testAddExtensionPath() {
+		$appRoot = TEST_ROOT . '/fixtures/exampleApp';
+		$fixture = $this->getMock($this->fixtureClass, array('renderError'));
+		$fixture->setApplicationRoot($appRoot);
+
+		// before adding extension, we can find 01.json in main app data
+		$actualPath = $fixture->findPath('data/01.json');
+		$this->assertEquals($appRoot . '/data/01.json', $actualPath);
+		
+		// now let's add extension
+		$extensionRoot = TEST_ROOT . '/fixtures/extension';
+		mkdir($extensionRoot);
+		mkdir($extensionRoot . '/data');
+		file_put_contents($extensionRoot . '/data/01.json', '{"example": 1.1}');
+
+		$fixture->addExtensionPath($extensionRoot);
+		$actualPath = $fixture->findPath('data/01.json');
+		$this->assertEquals($extensionRoot . '/data/01.json', $actualPath);
+
+		unlink($extensionRoot . '/data/01.json');
+		rmdir($extensionRoot . '/data');
+		rmdir($extensionRoot);
+	}
 }
