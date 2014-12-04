@@ -4,7 +4,7 @@ use Hoborg\SGallery\Application;
 
 class ApplicationTest extends \PHPUnit_Framework_TestCase {
 
-	protected $fixtureClass = '\\Hoborg\\SGallery\Application';
+	protected $fixtureClass = '\\Hoborg\\SGallery\\Application';
 
 	public function testSetWrongApplicationRoot() {
 		$fixture = $this->getMock($this->fixtureClass, array('renderError'));
@@ -13,7 +13,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 
 		$fixture->setApplicationRoot('loremipsum');
 	}
-	
+
 	public function testSetApplicationRootWithNoConfigDir() {
 		$appRoot = TEST_ROOT . '/fixtures/appNoConfig';
 		$fixture = $this->getMock($this->fixtureClass, array('renderError'));
@@ -37,7 +37,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 		$fixture->setApplicationRoot($appRoot);
 		rmdir($appRoot . '/conf');
 		rmdir($appRoot);
-		
 	}
 
 	public function testSetConfigurationOverrideWithWrongPathToFile() {
@@ -53,7 +52,6 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 		$config = $fixture->getConfiguration();
 		rmdir($appRoot . '/conf');
 		rmdir($appRoot);
-		
 	}
 
 	public function testSetEmptyConfigurationOverride() {
@@ -76,17 +74,16 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 
 		$fixture->setApplicationRoot($appRoot);
 
-		// check value before overriding 
+		// check value before overriding
 		$config = $fixture->getConfiguration();
 		$this->assertEquals('not overriden', $config['override.test']);
 
-		// overrides	
+		// overrides
 		file_put_contents($override, 'override.test = overriden');
 		$fixture->setConfigurationOverride($override);
 		$config = $fixture->getConfiguration();
 
 		$this->assertEquals('overriden', $config['override.test']);
-
 	}
 
 	public function testAddExtensionPath() {
@@ -97,7 +94,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase {
 		// before adding extension, we can find 01.json in main app data
 		$actualPath = $fixture->findPath('data/01.json');
 		$this->assertEquals($appRoot . '/data/01.json', $actualPath);
-		
+
 		// now let's add extension
 		$extensionRoot = TEST_ROOT . '/fixtures/extension';
 		mkdir($extensionRoot);

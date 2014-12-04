@@ -1,6 +1,8 @@
 <?php
 namespace Hoborg\SGallery\Command;
 
+use Hoborg\SGallery\Image\Finder,
+	Hoborg\SGallery\Image\Image;
 use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Input\InputArgument,
 	Symfony\Component\Console\Input\InputInterface,
@@ -8,6 +10,10 @@ use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Output\OutputInterface;
 
 class RefreshCoversCommand extends Command {
+
+	protected $imageFinder = null;
+
+	protected $image = null;
 
 	protected function configure() {
 		$this->setName('refresh:covers')
@@ -20,6 +26,8 @@ class RefreshCoversCommand extends Command {
 		$config = $this->getApplication()->getConfiguration();
 
 		// check source and target folders
+		$this->imageFinder = new Finder($this->getApplication());
+		$this->image = Image::createFromConfig($config);
 		$this->check($config);
 
 		$output->writeln("scanning {$config['source']} for albums");
@@ -60,7 +68,6 @@ class RefreshCoversCommand extends Command {
 	}
 
 	protected function generateCover($folder) {
-
 		$config = $this->getApplication()->getConfiguration();
 		$images = array();
 
@@ -68,7 +75,7 @@ class RefreshCoversCommand extends Command {
 		if (is_file("{$folder}/sgallery.properties")) {
 			$albumInfo = parse_ini_file("{$folder}/sgallery.properties");
 			if (!empty($albumInfo['cover'])) {
-				$thumbFileName = $config['target'] . '/static/thumbnails/' . md5("{$folder}/{$albumInfo['cover']}") . '.jpg';
+				$thumbFileName = $this->imageFinder->getThumbnailFileName("{$folder}/{$albumInfo['cover']}", '.jpg');
 				if (is_file($thumbFileName)) {
 					$images[] = $thumbFileName;
 				}
@@ -86,7 +93,7 @@ class RefreshCoversCommand extends Command {
 
 				if (is_file("{$folder}/{$entry}")) {
 					// look for thumbnail
-					$thumbFileName = $config['target'] . '/static/thumbnails/' . md5("{$folder}/{$entry}") . '.jpg';
+					$thumbFileName = $this->imageFinder->getThumbnailFileName("{$folder}/{$entry}", '.jpg');
 					if (is_file($thumbFileName)) {
 						$images[] = $thumbFileName;
 					}
@@ -103,7 +110,7 @@ class RefreshCoversCommand extends Command {
 				}
 
 				if (is_dir("{$folder}/{$entry}")) {
-					$coverFileName = $config['target'] . '/static/thumbnails/' . md5("{$folder}/{$entry}") . '-cvr.jpg';
+					$coverFileName = $this->imageFinder->getThumbnailFileName("{$folder}/{$entry}", '-cvr.jpg');
 					if (is_file($coverFileName)) {
 						$images[] = $coverFileName;
 					}
@@ -134,45 +141,9 @@ class RefreshCoversCommand extends Command {
 		}
 
 		// use thumbnails
-		return $this->assembleCover($folder, $coverImages);
-	}
-
-	protected function assembleCover($folder, array $coverImages) {
-
-		$config = $this->getApplication()->getConfiguration();
-		$coverQuality = isset($config['thumbnails.quality']) ? $config['thumbnails.quality'] : 75;
+		$coverFileName = $this->imageFinder->getThumbnailFileName($folder, '-cvr.jpg');
 		$coverSize = isset($config['thumbnails.size']) ? $config['thumbnails.size'] : 230;
-		$coverFileName = $config['target'] . '/static/thumbnails/' . md5($folder) . '-cvr.jpg';
-
-		if (count($coverImages) == 1) {
-			return copy($coverImages[0], $coverFileName);
-		}
-
-		$cover = imagecreatetruecolor($coverSize, $coverSize);
-		$thumbs = array();
-		foreach ($coverImages as $img) {
-			$thumbs[] = imagecreatefromjpeg($img);
-		}
-
-		if (count($thumbs) == 4) {
-			imagecopyresampled($cover, $thumbs[0], 0, 0,                       0, 0,
-					$coverSize/2, $coverSize/2, $coverSize, $coverSize);
-			imagecopyresampled($cover, $thumbs[1], $coverSize/2, 0,            0, 0,
-					$coverSize/2, $coverSize/2, $coverSize, $coverSize);
-			imagecopyresampled($cover, $thumbs[2], 0, $coverSize/2,            0, 0,
-					$coverSize/2, $coverSize/2, $coverSize, $coverSize);
-			imagecopyresampled($cover, $thumbs[3], $coverSize/2, $coverSize/2, 0, 0,
-					$coverSize/2, $coverSize/2, $coverSize, $coverSize);
-		}
-		if (count($thumbs) == 2) {
-			imagecopyresampled($cover, $thumbs[0], 0, 0,            0, $coverSize/4,
-					$coverSize, $coverSize/2, $coverSize, $coverSize/2);
-			imagecopyresampled($cover, $thumbs[1], 0, $coverSize/2, 0, $coverSize/4,
-					$coverSize, $coverSize/2, $coverSize, $coverSize/2);
-		}
-
-		// Output
-		return imagejpeg($cover, $coverFileName, $coverQuality);
+		return $this->image->assembleCover($coverImages, $coverFileName, $coverSize);
 	}
 
 	protected function check(array $config) {

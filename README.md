@@ -15,7 +15,7 @@ You can use it to generate your gallery on your PC and upload it to your web ser
 
 You need PHP 5.3 (or higher) to run it from command line.
 
-After installing and configuring all you need to do is run single command
+After [installing](#installation) and configuring all you need to do is run single command
 ~~~~~
 php src/sg.php update
 ~~~~~
@@ -59,9 +59,9 @@ vim conf/properties.ini
 
 
 
-## Development 
+## Development
 
-If you want to update JS, you will have to run following command after putting your changes. 
+If you want to update JS, you will have to run following command after putting your changes.
 ~~~~~
 ant build.js
 php src/sg.php install:assets
