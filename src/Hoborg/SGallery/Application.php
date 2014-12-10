@@ -4,7 +4,9 @@ namespace Hoborg\SGallery;
 use Symfony\Component\Console\Application as ConsoleApplication,
 	Symfony\Component\Console\Output\ConsoleOutput,
 	Symfony\Component\Console\Output\ConsoleOutputInterface,
-	Symfony\Component\Console\Output\OutputInterface;
+	Symfony\Component\Console\Output\OutputInterface,
+	Symfony\Component\Console\Input\InputInterface,
+	Symfony\Component\Console\Input\InputOption;
 use Hoborg\SGallery\Command\RefreshCommand;
 
 class Application extends ConsoleApplication {
@@ -17,6 +19,23 @@ class Application extends ConsoleApplication {
 	protected $configuration = null;
 
 	protected $extensions = array();
+
+	public function init() {
+		$this->getDefinition()->addOption(new InputOption(
+			'--config', '-c', InputOption::VALUE_REQUIRED,
+			'Specify config file.',
+			'sgallery.properties'
+		));
+	}
+
+	public function doRun(InputInterface $input, OutputInterface $output) {
+		$input->bind($this->getDefinition());
+		$options = $input->getOptions();
+
+		$this->setConfigurationOverride($options['config']);
+
+		return parent::doRun($input, $output);
+	}
 
 	public function setApplicationRoot($appRoot) {
 		$this->appRoot = realpath($appRoot);
