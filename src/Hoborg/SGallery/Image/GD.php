@@ -1,7 +1,7 @@
 <?php
 namespace Hoborg\SGallery\Image;
 
-class GD implements Image {
+class GD implements ImageInterface {
 
 	/**
 	 *
@@ -15,12 +15,19 @@ class GD implements Image {
 
 	protected $exifEnabled = false;
 
-	public static function isEnabled() {
-		return extension_loaded('gd');
+	public static function createFromConfig(array $config) {
+		if (extension_loaded('gd')) {
+			$imageMaxDim = empty($config['thumbnails.sourceMaxSize']) ? 4000 : $config['thumbnails.sourceMaxSize'];
+			return new \Hoborg\SGallery\Image\GD(array(
+				'force' => false,
+				'imageMaxDim' => $imageMaxDim
+			));
+		} else {
+			throw new \Exception('Missing GD module');
+		}
 	}
 
 	public function __construct($options) {
-
 		// set options
 		foreach (array('force', 'quality', 'imageMaxDim') as $param) {
 			if (isset($options[$param])) {
@@ -56,6 +63,7 @@ class GD implements Image {
 		$y = ($l == $height) ? 0 : round(($height - $l) / 2);
 
 		$thumb = imagecreatetruecolor($size, $size);
+		$this->ensureFodlerExists(dirname($dstFile));
 
 		// Resize
 		imagecopyresampled($thumb, $source, 0, 0, $x, $y, $size, $size, $l, $l);
@@ -78,8 +86,41 @@ class GD implements Image {
 			}
 		}
 
-		// Output
 		return imagejpeg($thumb, $dstFile, $this->quality);
+	}
+
+	public function assembleCover(array $coverImages, $coverFileName, $size) {
+		$this->ensureFodlerExists(dirname($coverFileName));
+
+		if (count($coverImages) == 1) {
+			return copy($coverImages[0], $coverFileName);
+		}
+
+		$cover = imagecreatetruecolor($size, $size);
+		$thumbs = array();
+		foreach ($coverImages as $img) {
+			$thumbs[] = imagecreatefromjpeg($img);
+		}
+
+		if (count($thumbs) == 4) {
+			imagecopyresampled($cover, $thumbs[0], 0, 0, 0, 0,
+					$size/2, $size/2, $size, $size);
+			imagecopyresampled($cover, $thumbs[1], $size/2, 0, 0, 0,
+					$size/2, $size/2, $size, $size);
+			imagecopyresampled($cover, $thumbs[2], 0, $size/2, 0, 0,
+					$size/2, $size/2, $size, $size);
+			imagecopyresampled($cover, $thumbs[3], $size/2, $size/2, 0, 0,
+					$size/2, $size/2, $size, $size);
+		}
+		if (count($thumbs) == 2) {
+			imagecopyresampled($cover, $thumbs[0], 0, 0, 0, $size/4,
+					$size, $size/2, $size, $size/2);
+			imagecopyresampled($cover, $thumbs[1], 0, $size/2, 0, $size/4,
+					$size, $size/2, $size, $size/2);
+		}
+
+		// Output
+		return imagejpeg($cover, $coverFileName, $this->quality);
 	}
 
 	protected function load($file) {
@@ -96,5 +137,13 @@ class GD implements Image {
 		}
 
 		return null;
+	}
+
+	protected function ensureFodlerExists($folder) {
+		if (!is_readable($folder)) {
+			if (!mkdir($folder, 0770, true)) {
+				throw new \Exception('Can not create ' . $folder, 1);
+			}
+		}
 	}
 }

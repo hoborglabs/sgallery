@@ -5,13 +5,23 @@
 /.externalToolBuilders
 *.swp
 
+
+
+
+# project
 *.ini
 !*.default.ini
 !conf/i18n/*.ini
-build.properties
 sgallery.properties
+!/tests/**/sgallery.properties
 
+
+
+
+# Build and Tests
+/build.properties
 /composer.*
 !/composer.json
-
 /vendors
+phpunit.phar
+/tests/public

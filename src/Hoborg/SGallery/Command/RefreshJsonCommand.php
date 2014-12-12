@@ -1,6 +1,7 @@
 <?php
 namespace Hoborg\SGallery\Command;
 
+use Hoborg\SGallery\Image\Finder;
 use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Input\InputArgument,
 	Symfony\Component\Console\Input\InputInterface,
@@ -13,11 +14,11 @@ class RefreshJsonCommand extends Command {
 
 	protected $progressOut = null;
 
+	protected $imageFinder = null;
+
 	protected function configure() {
 		$this->setName('refresh:json')
 			->setDescription('Refresh gallery HTML.');
-
-		$this->m = new \Mustache_Engine(array('charset' => 'UTF-8'));
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
@@ -27,6 +28,8 @@ class RefreshJsonCommand extends Command {
 
 		// check source and target folders
 		$this->check($config);
+		$this->imageFinder = new Finder($this->getApplication());
+		$this->m = new \Mustache_Engine(array('charset' => 'UTF-8'));
 
 		$this->progressOut = new \Hoborg\SGallery\Output\Progress($output, $this->countFolders($config['source']));
 		$this->scanFolderForImages($config['source']);
@@ -71,10 +74,9 @@ class RefreshJsonCommand extends Command {
 
 		foreach ($images as $image) {
 			$ext = strtolower(preg_replace('/.*?\.([^.]+)$/', '$1', $image));
-			$cacheFile = md5($image) . ".{$ext}";
 			$batch[] = array(
 				'full-size' => str_replace($config['source'], '', $image),
-				'src' => "/static/thumbnails/{$cacheFile}",
+				'src' => $this->imageFinder->getPublicThumbnailFileName($image, ".{$ext}"),
 			);
 
 			if (count($batch) == $batchSize) {
@@ -89,7 +91,7 @@ class RefreshJsonCommand extends Command {
 		// the last batch
 		if (count($batch) > 0) {
 			$jsonFileName = $config['target'] . '/static/json/' . md5($folderPath) . '-'
-			. str_pad($i, 6, '0', STR_PAD_LEFT) . '.json';
+					. str_pad($i, 6, '0', STR_PAD_LEFT) . '.json';
 			$json['html'] = $this->m->render(file_get_contents($batchTemplate), array('photos' => $batch));
 			file_put_contents($jsonFileName, json_encode($json));
 		}

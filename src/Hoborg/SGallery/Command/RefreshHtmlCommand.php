@@ -1,6 +1,7 @@
 <?php
 namespace Hoborg\SGallery\Command;
 
+use Hoborg\SGallery\Image\Finder;
 use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Input\InputArgument,
 	Symfony\Component\Console\Input\InputInterface,
@@ -11,21 +12,21 @@ class RefreshHtmlCommand extends Command {
 
 	protected $photoExtensions = array('jpg', 'jpeg', 'png', 'gif');
 
+	protected $imageFinder = null;
+
 	protected function configure() {
 		$this->setName('refresh:html')
 			->setDescription('Refresh gallery HTML.');
-
-		$this->m = new \Mustache_Engine(array('charset' => 'UTF-8'));
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-
 		$output->writeln("\n<info>Refresh HTML Files.</info>");
 		$config = $this->getApplication()->getConfiguration();
 
 		// check source and target folders
+		$this->imageFinder = new Finder($this->getApplication());
 		$this->check($config);
-
+		$this->m = new \Mustache_Engine(array('charset' => 'UTF-8'));
 		$output->writeln("scanning {$config['source']}");
 		$folders = $this->scanSourceForFolders($config['source']);
 
@@ -45,7 +46,7 @@ class RefreshHtmlCommand extends Command {
 			'path' => $folderPath,
 			'slug' => '',
 			'meta' => '',
-			'cover' => '/static/thumbnails/' . md5($folderPath) . "-cvr.jpg",
+			'cover' => $this->imageFinder->getPublicThumbnailFileName($folderPath, '-cvr.jpg'),
 			'folders' => array(),
 		);
 

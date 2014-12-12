@@ -3,7 +3,8 @@ namespace Hoborg\SGallery;
 
 use Symfony\Component\Console\Application as ConsoleApplication,
 	Symfony\Component\Console\Output\ConsoleOutput,
-	Symfony\Component\Console\Output\ConsoleOutputInterface;
+	Symfony\Component\Console\Output\ConsoleOutputInterface,
+	Symfony\Component\Console\Output\OutputInterface;
 use Hoborg\SGallery\Command\RefreshCommand;
 
 class Application extends ConsoleApplication {

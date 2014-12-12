@@ -1,6 +1,8 @@
 <?php
 namespace Hoborg\SGallery\Command;
 
+use Hoborg\SGallery\Image\Finder,
+	Hoborg\SGallery\Image\Image;
 use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Input\InputArgument,
 	Symfony\Component\Console\Input\InputInterface,
@@ -14,17 +16,20 @@ class RefreshThumbnailsCommand extends Command {
 	 */
 	protected $image = null;
 
+	protected $imageFinder = null;
+
 	protected function configure() {
 		$this->setName('refresh:thumbnails')
 			->setDescription('Refresh gallery thumbnails files');
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-
 		$output->writeln("\n<info>Refresh Thumbnails Files.</info>");
 		$config = $this->getApplication()->getConfiguration();
 
 		// check source and target folders
+		$this->imageFinder = new Finder($this->getApplication());
+		$this->image = Image::createFromConfig($config);
 		$this->check($config);
 
 		$output->writeln("scanning {$config['source']} for images");
@@ -35,27 +40,12 @@ class RefreshThumbnailsCommand extends Command {
 		$this->progressOut = new \Hoborg\SGallery\Output\Progress($output, $total);
 		$output->writeln("found {$total} photos.");
 
-		$this->initImageProcessor($config);
-
 		$i = 0;
 		foreach ($images as $image) {
 			$success = $this->generateThumbnail($image);
 			$this->progressOut->printProgress($success);
 		}
 		$output->writeln("\ndone.");
-	}
-
-	protected function initImageProcessor(array $config) {
-		if (\Hoborg\SGallery\Image\GD::isEnabled()) {
-			$config = $this->getApplication()->getConfiguration();
-			$imageMaxDim = empty($config['thumbnails.sourceMaxSize']) ? 4000 : $config['thumbnails.sourceMaxSize'];
-			$this->image = new \Hoborg\SGallery\Image\GD(array(
-				'force' => false,
-				'imageMaxDim' => $imageMaxDim
-			));
-		} else {
-			throw new \Exception('Missing GD module');
-		}
 	}
 
 	protected function scanFolderForImages($folder) {
@@ -85,7 +75,7 @@ class RefreshThumbnailsCommand extends Command {
 	protected function generateThumbnail($image) {
 		$ext = strtolower(preg_replace('/.*\.([^.]+)$/', '$1', $image));
 		$config = $this->getApplication()->getConfiguration();
-		$cacheThumb = $config['target'] . '/static/thumbnails/' . md5($image) . '.jpg';
+		$cacheThumb = $this->imageFinder->getThumbnailFileName($image, '.jpg');
 
 		$imageQuality = !isset($config['thumbnails.quality']) ? 75 : $config['thumbnails.quality'];
 		$imageThumbSize = empty($config['thumbnails.size']) ? 230 : $config['thumbnails.size'];
@@ -100,9 +90,11 @@ class RefreshThumbnailsCommand extends Command {
 		if (!is_readable($config['target'])) {
 			throw new \Exception('Target folder not readable', 1);
 		}
-		if (!is_readable($config['target'] . '/static/thumbnails')) {
-			if (!mkdir($config['target'] . '/static/thumbnails', 0770, true)) {
-				throw new \Exception('Can not create ' . $config['target'] . '/static/thumbnails', 1);
+
+		$thumbnailsRoot = $this->imageFinder->getThumbnailsFolder();
+		if (!is_readable($thumbnailsRoot)) {
+			if (!mkdir($thumbnailsRoot, 0770, true)) {
+				throw new \Exception('Can not create ' . $thumbnailsRoot, 1);
 			}
 		}
 	}
