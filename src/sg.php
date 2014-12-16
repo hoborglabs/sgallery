@@ -6,6 +6,6 @@ $loader->add('Hoborg', __DIR__ . '/');
 use Hoborg\SGallery\Application;
 
 $console = new Application();
+$console->init();
 $console->setApplicationRoot(__DIR__ . '/../');
-$console->setConfigurationOverride('sgallery.properties');
 $console->run();
