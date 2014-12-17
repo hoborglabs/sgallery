@@ -2,7 +2,8 @@
 namespace Hoborg\SGallery\Command;
 
 use Hoborg\SGallery\Image\Finder,
-	Hoborg\SGallery\Image\Image;
+	Hoborg\SGallery\Image\Image,
+	Hoborg\SGallery\Image\ImageInterface;
 use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Input\InputArgument,
 	Symfony\Component\Console\Input\InputInterface,
@@ -23,13 +24,16 @@ class RefreshThumbnailsCommand extends Command {
 			->setDescription('Refresh gallery thumbnails files');
 	}
 
+	public function inject(ImageInterface $image, Finder $imageFinder) {
+		$this->image = $image;
+		$this->imageFinder = $imageFinder;
+	}
+
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$output->writeln("\n<info>Refresh Thumbnails Files.</info>");
 		$config = $this->getApplication()->getConfiguration();
 
 		// check source and target folders
-		$this->imageFinder = new Finder($this->getApplication());
-		$this->image = Image::createFromConfig($config);
 		$this->check($config);
 
 		$output->writeln("scanning {$config['source']} for images");
@@ -76,11 +80,13 @@ class RefreshThumbnailsCommand extends Command {
 		$ext = strtolower(preg_replace('/.*\.([^.]+)$/', '$1', $image));
 		$config = $this->getApplication()->getConfiguration();
 		$cacheThumb = $this->imageFinder->getThumbnailFileName($image, '.jpg');
-
-		$imageQuality = !isset($config['thumbnails.quality']) ? 75 : $config['thumbnails.quality'];
 		$imageThumbSize = empty($config['thumbnails.size']) ? 230 : $config['thumbnails.size'];
 
-		return $this->image->makeThumbnail($image, $cacheThumb, $imageThumbSize);
+		$this->imageFinder->ensureFodlerExists(dirname($cacheThumb));
+		$ret = $this->image->makeThumbnail($image, $cacheThumb, $imageThumbSize);
+		$this->imageFinder->ensureFileMode($cacheThumb);
+
+		return $ret;
 	}
 
 	protected function check(array $config) {
@@ -91,11 +97,6 @@ class RefreshThumbnailsCommand extends Command {
 			throw new \Exception('Target folder not readable', 1);
 		}
 
-		$thumbnailsRoot = $this->imageFinder->getThumbnailsFolder();
-		if (!is_readable($thumbnailsRoot)) {
-			if (!mkdir($thumbnailsRoot, 0770, true)) {
-				throw new \Exception('Can not create ' . $thumbnailsRoot, 1);
-			}
-		}
+		$this->imageFinder->ensureFodlerExists($this->imageFinder->getThumbnailsFolder());
 	}
 }

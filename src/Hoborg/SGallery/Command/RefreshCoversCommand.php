@@ -2,7 +2,8 @@
 namespace Hoborg\SGallery\Command;
 
 use Hoborg\SGallery\Image\Finder,
-	Hoborg\SGallery\Image\Image;
+	Hoborg\SGallery\Image\Image,
+	Hoborg\SGallery\Image\ImageInterface;
 use Symfony\Component\Console\Command\Command,
 	Symfony\Component\Console\Input\InputArgument,
 	Symfony\Component\Console\Input\InputInterface,
@@ -20,14 +21,16 @@ class RefreshCoversCommand extends Command {
 			->setDescription('Refresh albums cover. Make sure you run refresh:thumbnails first');
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	public function inject(ImageInterface $image, Finder $imageFinder) {
+		$this->image = $image;
+		$this->imageFinder = $imageFinder;
+	}
 
+	protected function execute(InputInterface $input, OutputInterface $output) {
 		$output->writeln("\n<info>Refresh Album Covers.</info>");
 		$config = $this->getApplication()->getConfiguration();
 
 		// check source and target folders
-		$this->imageFinder = new Finder($this->getApplication());
-		$this->image = Image::createFromConfig($config);
 		$this->check($config);
 
 		$output->writeln("scanning {$config['source']} for albums");
@@ -143,7 +146,11 @@ class RefreshCoversCommand extends Command {
 		// use thumbnails
 		$coverFileName = $this->imageFinder->getThumbnailFileName($folder, '-cvr.jpg');
 		$coverSize = isset($config['thumbnails.size']) ? $config['thumbnails.size'] : 230;
-		return $this->image->assembleCover($coverImages, $coverFileName, $coverSize);
+		$this->imageFinder->ensureFodlerExists(dirname($coverFileName));
+		$ret = $this->image->assembleCover($coverImages, $coverFileName, $coverSize);
+		$this->imageFinder->ensureFileMode($coverFileName);
+
+		return $ret;
 	}
 
 	protected function check(array $config) {
@@ -153,10 +160,7 @@ class RefreshCoversCommand extends Command {
 		if (!is_readable($config['target'])) {
 			throw new \Exception('Target folder not readable', 1);
 		}
-		if (!is_readable($config['target'] . '/static/thumbnails')) {
-			if (!mkdir($config['target'] . '/static/thumbnails', 0770, true)) {
-				throw new \Exception('Can not create ' . $config['target'] . '/static/thumbnails', 1);
-			}
-		}
+
+		$this->imageFinder->ensureFodlerExists($this->imageFinder->getThumbnailsFolder());
 	}
 }

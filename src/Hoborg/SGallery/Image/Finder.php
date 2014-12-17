@@ -26,6 +26,32 @@ class Finder {
 		return "/static/thumbnails/{$thumb}{$suffix}";
 	}
 
+	public function ensureFodlerExists($folder) {
+		$config = $this->app->getConfiguration();
+		$mode = isset($config['public.folderMode']) ? $config['public.folderMode'] : '0750';
+		$oldUmask = umask(0);
+
+		if (!is_readable($folder)) {
+			if (!mkdir($folder, intval($mode, 8), true)) {
+				umask($oldUmask);
+				throw new \Exception('Can not create ' . $folder, 1);
+			}
+		}
+
+		umask($oldUmask);
+	}
+
+	public function ensureFileMode($file) {
+		$config = $this->app->getConfiguration();
+		$mode = isset($config['public.fileMode']) ? $config['public.fileMode'] : '0440';
+
+		$oldUmask = umask(0);
+		chmod($file, intval($mode, 8));
+		umask($oldUmask);
+
+		return true;
+	}
+
 	protected function getThumb($file) {
 		$md5 = md5($file);
 		$folder = substr($md5, 0, 3);
