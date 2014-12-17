@@ -21,6 +21,10 @@ class RefreshJsonCommand extends Command {
 			->setDescription('Refresh gallery HTML.');
 	}
 
+	public function inject(Finder $imageFinder) {
+		$this->imageFinder = $imageFinder;
+	}
+
 	protected function execute(InputInterface $input, OutputInterface $output) {
 
 		$output->writeln("\n<info>Refresh JSON Files.</info>");
@@ -28,7 +32,6 @@ class RefreshJsonCommand extends Command {
 
 		// check source and target folders
 		$this->check($config);
-		$this->imageFinder = new Finder($this->getApplication());
 		$this->m = new \Mustache_Engine(array('charset' => 'UTF-8'));
 
 		$this->progressOut = new \Hoborg\SGallery\Output\Progress($output, $this->countFolders($config['source']));
@@ -109,11 +112,8 @@ class RefreshJsonCommand extends Command {
 		if (!is_writable($config['target'])) {
 			throw new \Exception('Target folder is not writable', 1);
 		}
-		if (!is_readable($config['target'] . '/static/json')) {
-			if (!mkdir($config['target'] . '/static/json', 0770, true)) {
-				throw new \Exception('Can not create ' . $config['target'] . '/static/json', 1);
-			}
-		}
+
+		$this->imageFinder->ensureFodlerExists($config['target'] . '/static/json');
 	}
 
 	protected function countFolders($folder) {

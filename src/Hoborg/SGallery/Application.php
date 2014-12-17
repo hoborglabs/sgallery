@@ -26,6 +26,15 @@ class Application extends ConsoleApplication {
 			'Specify config file.',
 			'sgallery.properties'
 		));
+
+		$this->add(new Command\InstallCommand());
+		$this->add(new Command\InstallAssetsCommand());
+
+		$this->add(new Command\UpdateCommand());
+		$this->add(new Command\RefreshThumbnailsCommand());
+		$this->add(new Command\RefreshCoversCommand());
+		$this->add(new Command\RefreshHtmlCommand());
+		$this->add(new Command\RefreshJsonCommand());
 	}
 
 	public function doRun(InputInterface $input, OutputInterface $output) {
@@ -33,6 +42,15 @@ class Application extends ConsoleApplication {
 		$options = $input->getOptions();
 
 		$this->setConfigurationOverride($options['config']);
+		$this->setCatchExceptions(true);
+
+		$imageFinder = new Image\Finder($this);
+		$image = Image\Image::createFromConfig($this->getConfiguration());
+
+		$this->get('install:assets')->inject($imageFinder);
+		$this->get('refresh:thumbnails')->inject($image, $imageFinder);
+		$this->get('refresh:covers')->inject($image, $imageFinder);
+		$this->get('refresh:json')->inject($imageFinder);
 
 		return parent::doRun($input, $output);
 	}
@@ -108,20 +126,4 @@ class Application extends ConsoleApplication {
 		$output->writeln($error);
 		exit(1);
 	}
-
-	protected function getDefaultCommands() {
-		$commands = parent::getDefaultCommands();
-
-		$commands[] = new Command\InstallCommand();
-		$commands[] = new Command\InstallAssetsCommand();
-
-		$commands[] = new Command\UpdateCommand();
-		$commands[] = new Command\RefreshThumbnailsCommand();
-		$commands[] = new Command\RefreshCoversCommand();
-		$commands[] = new Command\RefreshHtmlCommand();
-		$commands[] = new Command\RefreshJsonCommand();
-
-		return $commands;
-	}
-
 }

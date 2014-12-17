@@ -63,7 +63,6 @@ class GD implements ImageInterface {
 		$y = ($l == $height) ? 0 : round(($height - $l) / 2);
 
 		$thumb = imagecreatetruecolor($size, $size);
-		$this->ensureFodlerExists(dirname($dstFile));
 
 		// Resize
 		imagecopyresampled($thumb, $source, 0, 0, $x, $y, $size, $size, $l, $l);
@@ -90,8 +89,6 @@ class GD implements ImageInterface {
 	}
 
 	public function assembleCover(array $coverImages, $coverFileName, $size) {
-		$this->ensureFodlerExists(dirname($coverFileName));
-
 		if (count($coverImages) == 1) {
 			return copy($coverImages[0], $coverFileName);
 		}
@@ -137,13 +134,5 @@ class GD implements ImageInterface {
 		}
 
 		return null;
-	}
-
-	protected function ensureFodlerExists($folder) {
-		if (!is_readable($folder)) {
-			if (!mkdir($folder, 0770, true)) {
-				throw new \Exception('Can not create ' . $folder, 1);
-			}
-		}
 	}
 }
