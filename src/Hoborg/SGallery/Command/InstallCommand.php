@@ -21,6 +21,8 @@ class InstallCommand extends Command {
 		$config = $this->getApplication()->getConfiguration();
 		$this->check($config);
 
+		$output->writeln("Target folder: {$config['target']}");
+
 		$this->getApplication()->get('install:assets')->run($input, $output);
 	}
 

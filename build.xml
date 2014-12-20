@@ -7,14 +7,14 @@
 	<property name="dir.base" location="." />
 	<property name="dir.src" location="." />
 	<property name="dir.test" location="${dir.base}/tests" />
-	<property name="dir.dist" location="./dist" />
+	<property name="dir.dist" location="${dir.base}/dist" />
+	<property name="dir.phar" location="${dir.base}/phar" />
 
 	<!-- Commands aliases -->
 	<property name="cmd.recess" value="recess" />
 	<property name="cmd.node" value="node" />
 	<property name="cmd.php" value="php" />
 	<property name="cmd.phpunit" value="phpunit" />
-
 
 
 
@@ -38,14 +38,13 @@
 
 
 
-
-	<!-- 
+	<!--
 	Build sGallery.
 	-->
 	<target name="build"
-		depends="prepare, build.css, build.js, build.php"
+		depends="prepare, build.css, build.js, build.php, build.phar"
 	>
-	
+
 	</target>
 
 	<target name="build.css"
@@ -90,6 +89,32 @@
 		<exec executable="${cmd.php}" output="${dir.dist}/img-proxy.php">
 			<arg line="-w" />
 			<arg line="${dir.src}/src/img-proxy.php" />
+		</exec>
+	</target>
+
+	<target name="build.phar"
+		description="Builds phar file"
+	>
+		<property name="version" value="development" />
+		<echo level="info">Building sg.phar ${version}</echo>
+
+		<delete dir="${dir.phar}" includeemptydirs="true">
+			<include name="**/*" />
+		</delete>
+		<delete file="${dir.base}/sg.phar" />
+		<copy todir="${dir.phar}">
+			<fileset dir="${dir.base}">
+				<include name="conf/**/*" />
+				<include name="dist/**/*" />
+				<include name="src/**/*" />
+				<include name="vendors/**/*" />
+				<include name="sg.php" />
+			</fileset>
+		</copy>
+
+		<exec executable="${cmd.php}">
+			<arg line="${dir.src}/tasks/build-phar.php" />
+			<arg line="-v ${version}" />
 		</exec>
 	</target>
 

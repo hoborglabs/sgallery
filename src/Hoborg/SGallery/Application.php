@@ -56,7 +56,7 @@ class Application extends ConsoleApplication {
 	}
 
 	public function setApplicationRoot($appRoot) {
-		$this->appRoot = realpath($appRoot);
+		$this->appRoot = $appRoot;
 		if (empty($this->appRoot)) {
 			return $this->renderError("Application Root {$appRoot} is not a folder.");
 		}
