@@ -1,8 +1,18 @@
 # SGallery
 
+* [Main Principles](#main-principles)
+* [Installation](#installation)
+* [Configuration](#configuration)
+
 SGallery stands for SimpleGallery or SpeedeGallery or SuperfastGallery
 or ... you get the idea.
 
+
+```
+curl -O http://get.hoborglabs.com/sgallery/sg.phar
+php sg.phar install
+php sg.phar update
+```
 
 
 
@@ -17,49 +27,36 @@ You need PHP 5.3 (or higher) to run it from command line.
 
 After [installing](#installation) and configuring all you need to do is run single command
 ~~~~~
-php src/sg.php update
+./sg.phar update
 ~~~~~
 and that's it!
 
 
 
 
-
 ## Installation
 
-First clone repo
-~~~~~
+Download Simple Gallery
+```
+curl -O http://get.hoborglabs.com/sgallery/sg.phar
+chmod +x sg.phar
+```
+
+
+
+### Development
+
+Clone repo
+```
 git clone git://github.com/hoborglabs/sgallery.git
 cd sgallery
-~~~~~
+```
 
-install vendors by downloading from get.hoborglabs.com
-~~~~~
-curl http://get.hoborglabs.com/sgallery/vendors.tar -O
-tar -xf vendors.tar
-~~~~~
-
-or use composer
-~~~~~
+Install vendors
+```
 curl -s https://getcomposer.org/installer | php
 php composer.phar update
-~~~~~
-
-And now install sgallery
-~~~~~
-php src/sg.php install
-~~~~~
-
-You can always change sgallery properties
-~~~~~
-vim conf/properties.ini
-~~~~~
-
-
-
-
-
-## Development
+```
 
 If you want to update JS, you will have to run following command after putting your changes.
 ~~~~~
@@ -76,11 +73,23 @@ php src/sg.php install:assets
 
 
 
+## Configuration
+
+create configuration file 'sgallery.properties' and specify source folder with your images, and target folder for
+generating gallery assets.
+
+```
+source = '/full/path/to/photos/folder'
+target = '/full/path/to/vhost/public'
+```
+
+
+
 
 ## Folder Structure
 
 After running SG you will find following folders in your target folder.
-~~~~~
+```
 + static
   + styles
   + scripts
@@ -90,4 +99,4 @@ After running SG you will find following folders in your target folder.
   + your-album-01
   + ...
 + index.html
-~~~~~
+```

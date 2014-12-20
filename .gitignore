@@ -26,3 +26,5 @@ sgallery.properties
 /vendors
 phpunit.phar
 /tests/public
+/phar/*
+/sg.phar
