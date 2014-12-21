@@ -111,8 +111,9 @@ class Application extends ConsoleApplication {
 				return realpath("{$extensionRoot}/{$relativePath}");
 			}
 		}
+
 		if (is_readable("{$this->appRoot}/{$relativePath}")) {
-			return realpath("{$this->appRoot}/{$relativePath}");
+			return "{$this->appRoot}/{$relativePath}";
 		}
 
 		return false;
