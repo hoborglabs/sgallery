@@ -44,7 +44,7 @@ class InstallAssetsCommand extends Command {
 		$sourceDir = $this->getApplication()->getAppRoot() . '/dist/static/scripts/hoborglabs';
 		$targetDir = $config['target'] . '/static/scripts/hoborglabs';
 
-		return copy($sourceDir . '/app.js', $targetDir . '/app.js');
+		return $this->copyFile($sourceDir . '/app.js', $targetDir . '/app.js');
 	}
 
 	protected function copyCss(array $config) {
@@ -54,13 +54,21 @@ class InstallAssetsCommand extends Command {
 		// FIXME: this should be a recursive copy of folder.
 		copy($sourceDir . 'gfx', $targetDir);
 
-		return copy($sourceDir . 'css/main.css', $targetDir . 'css/main.css');
+		return $this->copyFile($sourceDir . 'css/main.css', $targetDir . 'css/main.css');
+	}
+
+	protected function copyFile($src, $dest) {
+		$this->imageFinder->ensureFodlerExists(dirname($dest));
+		$ret = copy($src, $dest);
+		$this->imageFinder->ensureFileMode($dest);
+
+		return $ret;
 	}
 
 	protected function copyPhp(array $config) {
 		$sourceDir = $this->getApplication()->getAppRoot() . '/dist/';
 		$targetDir = $config['target'] . '/';
-		copy($sourceDir . '/img-proxy.php', $targetDir . '/img-proxy.php');
+		$this->copyFile($sourceDir . '/img-proxy.php', $targetDir . '/img-proxy.php');
 
 		// you can override src path for proxy
 		$source = empty($config['source.proxy']) ? $config['source'] : $config['source.proxy'];

@@ -107,6 +107,7 @@
 				<include name="conf/**/*" />
 				<include name="dist/**/*" />
 				<include name="src/**/*" />
+				<include name="templates/**/*" />
 				<include name="vendors/**/*" />
 				<include name="sg.php" />
 			</fileset>
