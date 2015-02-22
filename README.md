@@ -7,12 +7,15 @@
 SGallery stands for SimpleGallery or SpeedeGallery or SuperfastGallery
 or ... you get the idea.
 
-
 ```
 curl -O http://get.hoborglabs.com/sgallery/sg.phar
+vim sgallery.properties
 php sg.phar install
 php sg.phar update
 ```
+
+> **NOTE: ** For now, you have to edit `sgallery.properties` file yourself, but in the near future there will be
+> `configure` option available to create and edit that file.
 
 
 
@@ -78,10 +81,67 @@ php src/sg.php install:assets
 create configuration file 'sgallery.properties' and specify source folder with your images, and target folder for
 generating gallery assets.
 
-```
+```ini
 source = '/full/path/to/photos/folder'
 target = '/full/path/to/vhost/public'
 ```
+
+### source
+
+Source folder with your photos.
+~~~ini
+source = '/Users/wojtek/Pictures/'
+~~~
+
+### target
+
+Target folder - usually public folder of your host
+~~~ini
+target = '/var/www/sgallery/public'
+~~~
+
+### skin
+
+Skin name, being a folder name inside templates.
+~~~ini
+skin = hoborglabs
+~~~
+
+### language
+
+Language.
+~~~ini
+language = en
+~~~
+
+### public files and folders mode
+
+~~~ini
+public.folderMode = 0755
+public.fileMode = 0644
+~~~
+
+### thumbnails
+
+~~~ini
+; Quality for generated thumbnails. 100 no compression, 0 full
+; compression.
+thumbnails.quality = 75
+
+; Size for generated thumbnails
+thumbnails.size = 230
+
+; Max width or height of your source Image. Depending on your PHP
+; memory limit settings. For 128M keep it around 4000.
+thumbnails.sourceMaxSize = 4000
+~~~
+
+### covers limits
+
+~~~ini
+covers.limit.2tile = 16
+covers.limit.1tile = 8
+~~~
 
 
 
@@ -90,13 +150,13 @@ target = '/full/path/to/vhost/public'
 
 After running SG you will find following folders in your target folder.
 ```
-+ static
-  + styles
-  + scripts
-  + images
-  + json
-+ albums
-  + your-album-01
-  + ...
-+ index.html
+├── albums
+|   ├── your-album-01
+|   └── ...
+├── index.html
+└── static
+    ├── json
+    ├── scripts
+    ├── styles
+    └── thumbnails
 ```
