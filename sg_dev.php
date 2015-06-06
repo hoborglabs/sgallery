@@ -1,8 +1,8 @@
 <?php
-error_reporting(0);
+error_reporting(E_ALL);
 $loader = include __DIR__ . '/vendors/autoload.php';
 $loader->add('Hoborg', __DIR__ . '/');
-defined('SG_VERSION') || define('SG_VERSION', 'unknown');
+define('SG_VERSION', 'development');
 
 use Hoborg\SGallery\Application;
 

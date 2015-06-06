@@ -12,7 +12,7 @@
 *.ini
 !*.default.ini
 !conf/i18n/*.ini
-sgallery.properties
+/sg.properties
 !/conf/sgallery.properties
 !/tests/**/sgallery.properties
 
