@@ -3,19 +3,18 @@
 * [Main Principles](#main-principles)
 * [Installation](#installation)
 * [Configuration](#configuration)
+* [Folder Structure](#folder-structure)
 
 SGallery stands for SimpleGallery or SpeedeGallery or SuperfastGallery
 or ... you get the idea.
 
 ```
 curl -O http://get.hoborglabs.com/sgallery/sg.phar
-vim sgallery.properties
-php sg.phar install
-php sg.phar update
+chmod +x sg.phar
+./sg.phar configure
+./sg.phar install
+./sg.phar update
 ```
-
-> **NOTE: ** For now, you have to edit `sgallery.properties` file yourself, but in the near future there will be
-> `configure` option available to create and edit that file.
 
 
 
@@ -29,9 +28,11 @@ You can use it to generate your gallery on your PC and upload it to your web ser
 You need PHP 5.3 (or higher) to run it from command line.
 
 After [installing](#installation) and configuring all you need to do is run single command
+
 ~~~~~
 ./sg.phar update
 ~~~~~
+
 and that's it!
 
 
@@ -47,9 +48,11 @@ chmod +x sg.phar
 
 
 
+
 ### Development
 
 Clone repo
+
 ```
 git clone git://github.com/hoborglabs/sgallery.git
 cd sgallery
@@ -62,12 +65,14 @@ php composer.phar update
 ```
 
 If you want to update JS, you will have to run following command after putting your changes.
+
 ~~~~~
 ant build.js
 php src/sg.php install:assets
 ~~~~~
 
 If you want to update CSS, you need to run the following command after changing CSS files
+
 ~~~~~
 ant build.css
 php src/sg.php install:assets
@@ -78,13 +83,8 @@ php src/sg.php install:assets
 
 ## Configuration
 
-create configuration file 'sgallery.properties' and specify source folder with your images, and target folder for
-generating gallery assets.
-
-```ini
-source = '/full/path/to/photos/folder'
-target = '/full/path/to/vhost/public'
-```
+To configure or re-configure sgallery simply run `./sg.phar configure`. You can also manualy edit 'sg.properties' and
+specify source folder with your images, and target folder for generating gallery assets and all other options.
 
 ### source
 

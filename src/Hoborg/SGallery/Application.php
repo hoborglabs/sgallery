@@ -24,11 +24,12 @@ class Application extends ConsoleApplication {
 		$this->getDefinition()->addOption(new InputOption(
 			'--config', '-c', InputOption::VALUE_REQUIRED,
 			'Specify config file.',
-			'sgallery.properties'
+			'sg.properties'
 		));
 
 		$this->add(new Command\InstallCommand());
 		$this->add(new Command\InstallAssetsCommand());
+		$this->add(new Command\ConfigureCommand());
 
 		$this->add(new Command\UpdateCommand());
 		$this->add(new Command\RefreshThumbnailsCommand());
